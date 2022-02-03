@@ -1,6 +1,7 @@
 package com.simplerpc;
 
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -27,12 +28,12 @@ public class Interface {
         
     }
 
-    private static void AssertProtocol(String protocol) {
+    private static void AssertProtocol(String protocol) throws Exception {
         if (!protocol.equals(PROTOCOL))
             throw new Exception("Invalid protocol header");
     }
 
-    private static void AssertVersion(int[] version) {
+    private static void AssertVersion(int[] version) throws Exception {
         if (!Arrays.equals(version, VERSION)) {
             String vesionString = IntStream.of(version).mapToObj(i -> String.valueOf(i)).collect(Collectors.joining(",")) ;
             String refVesionString = IntStream.of(VERSION).mapToObj(i -> String.valueOf(i)).collect(Collectors.joining(","));
@@ -64,42 +65,47 @@ public class Interface {
         return Io.ReadByteString(connection.GetInputStream());
     }
 
-    private Object Read(Object obect_type) {
+    private Object Read(Object obect_type) throws Exception {
         return Io.Read(connection.GetInputStream(), device.endianness, device.size_t, obect_type);
     }
 
     /**
      * Get remote procedure call methods.
      * @return Methods.
+     * @throws Exception
      */
-    private Method[] GetMethods() {
+    private void GetMethods() throws Exception {
         Select(LIST_REQUEST);  
         
         AssertProtocol(ReadByteString());
         device.protocol = PROTOCOL;
 
+        var version = new int[]{
+            ((Integer)Read("B")).intValue(),
+            ((Integer)Read("B")).intValue(),
+            ((Integer)Read("B")).intValue()
+        };
+        AssertVersion(version);
 
+        device.version = VERSION;
+
+        var endianness_size = ReadByteString();
+        device.endianness = endianness_size.charAt(0);
+        device.size_t = endianness_size.charAt(1);
+
+        for (int i = 0;; i++) {
+            var line = ReadByteString();
+            if (line.isEmpty())
+                break;
+
+            var buffer = ByteBuffer.wrap(line.getBytes());
+            
+            var method = Protocol.ParseLine(i, buffer);
+            device.methods.put(method.name, method);
+        }
     }
-            """Get remote procedure call methods."""
-        self._select(_list_req)
 
-        _assert_protocol(self._read_byte_string().decode())
-        self.device['protocol'] = _protocol
-
-        version = tuple(self._read('B') for _ in range(3))
-        _assert_version(version)
-        self.device['version'] = version
-
-        self.device['endianness'], self.device['size_t'] = (
-            chr(c) for c in self._read_byte_string())
-
-        for index, line in enumerate(
-                until(lambda x: x == b'', self._read_byte_string)):
-            method = parse_line(index, line)
-            self.device['methods'][method['name']] = method
-
-
-    public void Open(InputStream handle) {
+    public void Open(InputStream handle) throws Exception {
         try {
             Thread.sleep(wait * 1000);
         } catch (InterruptedException e) {
@@ -109,9 +115,12 @@ public class Interface {
         if (handle != null)
             Load(handle);
         else
-            self._get_methods()
-        for method in self.device['methods'].values():
-            setattr(
-                self, method['name'], MethodType(make_function(method), self))
+            GetMethods();
+            
+        for (var method : device.methods.values()){
+            // TODO: generate function.
+        }
+            // setattr(
+            //     self, method['name'], MethodType(make_function(method), self))
     }
 }
