@@ -3,6 +3,7 @@ package com.simplerpc;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,8 +30,11 @@ public class Io {
         }
     } 
 
-    public static void Write(Device device) {
-
+    private static void WriteBasic(OutputStream stream, char endianness, char basic_type, Object value) {
+        if (basic_type == 's') {
+            //stream.wr
+            return;
+        }
     }
 
     /**
@@ -61,15 +65,15 @@ public class Io {
      * Read a value of basic type from a stream.
      * @param stream Stream object.
      * @param endianness Endianness.
-     * @param size_t
-     * @return Type of {value}.
+     * @param basic_type Type of {value}.
+     * @return Value of type {basic_type}.
      * @throws Exception
      */
-    private static Object ReadBasic(InputStream stream, char endianness, char size_t) throws Exception {
-        if (size_t == 's')
+    private static Object ReadBasic(InputStream stream, char endianness, char basic_type) throws Exception {
+        if (basic_type == 's')
             return ReadByteString(stream);
         
-        String full_type = (String.valueOf(endianness) + size_t);
+        String full_type = (String.valueOf(endianness) + basic_type);
 
         return ByteBufferStruct.Unpack(full_type, stream)[0];
     }

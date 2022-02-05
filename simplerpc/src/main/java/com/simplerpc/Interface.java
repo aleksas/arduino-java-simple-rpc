@@ -5,7 +5,6 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import com.simplerpc.serial.Serial;
 
@@ -21,11 +20,12 @@ public class Interface {
     public Serial connection;
     public Device device;
 
-    public Interface(String device, int baudrate, int wait, boolean autoconnect, InputStream load) {
+    public Interface(String device, int baudrate, int wait, boolean autoconnect, InputStream load) throws Exception {
         this.wait = wait;
         this.connection = new Serial(device, true, baudrate); //serial_for_url(device, true, baudrate);
 
-        
+        if (autoconnect)
+            this.Open(load);
     }
 
     private static void AssertProtocol(String protocol) throws Exception {
@@ -45,8 +45,18 @@ public class Interface {
         
     }
 
-    private Object Read() {
-        return new Object();
+    private String ReadByteString() {
+        return Io.ReadByteString(connection.GetInputStream());
+    }
+
+    /**
+     * Read a return value from a remote procedure call.
+     * @param obj_type Return type.
+     * @return Return type.
+     * @throws Exception
+     */
+    private Object Read(Object obj_type) throws Exception {
+        return Io.Read(connection.GetInputStream(), device.endianness, device.size_t, obj_type);
     }
 
     /**
@@ -54,19 +64,11 @@ public class Interface {
      * @param index Method index.
      */
     private void Select(int index) {
-
+        this.Write("B", index);
     } 
 
     private void Load(InputStream handle) {
         // TODO: implement yaml loader
-    }
-
-    private String ReadByteString() {
-        return Io.ReadByteString(connection.GetInputStream());
-    }
-
-    private Object Read(Object obect_type) throws Exception {
-        return Io.Read(connection.GetInputStream(), device.endianness, device.size_t, obect_type);
     }
 
     /**
