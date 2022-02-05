@@ -1,5 +1,7 @@
 package com.simplerpc;
 
+import static java.lang.Double.valueOf;
+
 import java.nio.ByteBuffer;
 
 /**
@@ -93,7 +95,7 @@ public class HalfPrecisionFloat {
      * @return the full-precision double floating pointing number.
      */
     public double getFullDouble() {
-        return new Double(getFullFloat());
+        return valueOf(getFullFloat());
     }
 
     /**

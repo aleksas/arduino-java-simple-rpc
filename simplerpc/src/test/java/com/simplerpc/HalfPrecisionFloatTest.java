@@ -25,19 +25,19 @@ public class HalfPrecisionFloatTest {
     byte[] bytes = simulateBytes(startingValue);
     HalfPrecisionFloat halfFloat = new HalfPrecisionFloat(bytes);
     final float retFloat = halfFloat.getFullFloat();
-    Assert.assertEquals(new Float(closestValue), new Float(retFloat));
+    Assert.assertEquals(Float.valueOf(closestValue), Float.valueOf(retFloat));
 
     HalfPrecisionFloat otherWay = new HalfPrecisionFloat(retFloat);
     final short shrtValue = otherWay.getHalfPrecisionAsShort();
-    Assert.assertEquals(new Short(shortRepresentation), new Short(shrtValue));
+    Assert.assertEquals(Short.valueOf(shortRepresentation), Short.valueOf(shrtValue));
 
     HalfPrecisionFloat backAgain = new HalfPrecisionFloat(shrtValue);
     final float backFlt = backAgain.getFullFloat();
-    Assert.assertEquals(new Float(closestValue), new Float(backFlt));
+    Assert.assertEquals(Float.valueOf(closestValue), Float.valueOf(backFlt));
 
     HalfPrecisionFloat dbl = new HalfPrecisionFloat(startingValue);
     final double retDbl = dbl.getFullDouble();
-    Assert.assertEquals(new Double(startingValue), new Double(retDbl));
+    Assert.assertEquals(Double.valueOf(startingValue), Double.valueOf(retDbl));
   }
 
   @Test(expected = IllegalArgumentException.class)
