@@ -34,7 +34,7 @@ class Protocol {
             return TypeName(Arrays.asList((Object[]) obj_type));            
         }
 
-        return Io.Cast((String) obj_type).getSimpleName();
+        return Io.Cast(((String) obj_type).charAt(0)).getSimpleName();
     }
 
     public static Object ConstructType(ByteBuffer tokens) {

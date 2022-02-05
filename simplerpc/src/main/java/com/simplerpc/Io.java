@@ -4,6 +4,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,23 +20,31 @@ public class Io {
      * @param c_type C type.
      * @return Casting function.
      */
-    public static Class Cast(String c_type) {
-        if (c_type == "?")
+    public static Class Cast(char c_type) {
+        if (c_type == '?')
             return boolean.class;
         else {
-            if (Arrays.asList("c", "s").contains(c_type))
+            if (Arrays.asList('c', 's').contains(c_type))
                 return byte[].class;
-            if (Arrays.asList("f", "d").contains(c_type))
+            if (Arrays.asList('f', 'd').contains(c_type))
                 return float.class;
             return int.class;
         }
     } 
 
-    private static void WriteBasic(OutputStream stream, char endianness, char basic_type, Object value) {
+    private static void WriteBasic(OutputStream stream, char endianness, char basic_type, Object value) throws Exception {
         if (basic_type == 's') {
-            //stream.wr
+            stream.write(((String) value).getBytes());
+            stream.write((byte) '\0');
             return;
         }
+
+
+        String full_type = (String.valueOf(endianness) + basic_type);        
+
+        ByteBuffer buffer = ByteBufferStruct.Pack(full_type, Arrays.asList(Cast(basic_type).cast(value)).toArray());
+        
+        Channels.newChannel(stream).write(buffer);
     }
 
     /**
