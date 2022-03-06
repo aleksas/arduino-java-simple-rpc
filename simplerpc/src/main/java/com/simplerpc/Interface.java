@@ -2,6 +2,7 @@ package com.simplerpc;
 
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -10,19 +11,21 @@ import com.simplerpc.serial.Serial;
 
 public class Interface {
     private static String PROTOCOL = "simpleRPC";
-    private static int[] VERSION = {3, 0, 0};
     private static int LIST_REQUEST = 0xff;
+    
+    public static int[] VERSION = {3, 0, 0};
 
     public int baudrate = 9600;
     public int wait = 2;
     public boolean autoconnect = true;
     public InputStream load = null; 
-    public Serial connection;
-    public Device device;
+    public Serial connection = null; 
+    public Device device = null; 
 
     public Interface(String device, int baudrate, int wait, boolean autoconnect, InputStream load) throws Exception {
         this.wait = wait;
         this.connection = new Serial(device, true, baudrate); //serial_for_url(device, true, baudrate);
+        this.device = new Device();
 
         if (autoconnect)
             this.Open(load);
@@ -41,8 +44,14 @@ public class Interface {
         }
     }
 
-    private void Write(Object object_type, Object value) {
-        
+    public boolean isOpen() {
+        return this.connection.isOpen();
+    }
+
+    private void Write(String format, Object value) throws Exception {
+        var channel = Channels.newChannel(connection.GetOutputStream());
+        var buffer = ByteBufferStruct.Pack(format, new Object[]{ value });
+        channel.write(buffer);
     }
 
     private String ReadByteString() {
@@ -62,8 +71,9 @@ public class Interface {
     /**
      * Initiate a remote procedure call, select the method.
      * @param index Method index.
+     * @throws Exception
      */
-    private void Select(int index) {
+    private void Select(int index) throws Exception {
         this.Write("B", index);
     } 
 
@@ -107,12 +117,18 @@ public class Interface {
         }
     }
 
+    public void Open() throws Exception {
+        Open(null);
+    }
+
     public void Open(InputStream handle) throws Exception {
         try {
             Thread.sleep(wait * 1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        
+        connection.Open();
 
         if (handle != null)
             Load(handle);
