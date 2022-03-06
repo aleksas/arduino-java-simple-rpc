@@ -9,6 +9,8 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Map;
 
+import javax.xml.catalog.Catalog;
+
 public class ByteBufferStruct {
     private static final String FAILED_TO_READ_TYPE_COMPLETELY = "Failed to read type completely";
 
@@ -50,7 +52,7 @@ public class ByteBufferStruct {
         }
     }
 
-    public static ByteBuffer Pack(String format, Object[] object) throws Exception {
+    public static ByteBuffer Pack(String format, Object[] object) {
         byte[] bytes = new byte[CalcSize(format)];
         
         ByteBuffer buffer = wrap(bytes);
@@ -108,7 +110,7 @@ public class ByteBufferStruct {
                     buffer.putDouble((float) object[pos]);
                     break;
                 default:
-                    throw new Exception(String.format("Not supported format: %c", c));
+                    throw new RuntimeException(String.format("Not supported format: %c", c));
             }
         }
 
@@ -117,13 +119,17 @@ public class ByteBufferStruct {
         return buffer;
     }
 
-    public static Object[] Unpack(String format, InputStream stream) throws Exception {
+    public static Object[] Unpack(String format, InputStream stream) {
         ArrayList<Object> result = new ArrayList<Object>();
         
         byte[] bytes = new byte[CalcSize(format)];
-        int length = stream.read(bytes);
-        if (bytes.length != length)
-            throw new Exception(FAILED_TO_READ_TYPE_COMPLETELY);
+        try {
+            int length = stream.read(bytes);
+            if (bytes.length != length)
+                throw new Exception(FAILED_TO_READ_TYPE_COMPLETELY);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         ByteBuffer buffer = wrap(bytes);
         buffer.rewind();
@@ -176,7 +182,7 @@ public class ByteBufferStruct {
                     o = buffer.getDouble();
                     break;
                 default:
-                    throw new Exception(String.format("Not supported format: %c", c));
+                    throw new RuntimeException(String.format("Not supported format: %c", c));
             }
 
             result.add(o);

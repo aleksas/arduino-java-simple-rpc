@@ -1,5 +1,6 @@
 package com.simplerpc;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
@@ -7,6 +8,8 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.simplerpc.serial.Serial;
 
 public class Interface {
@@ -48,10 +51,14 @@ public class Interface {
         return this.connection.isOpen();
     }
 
-    private void Write(String format, Object value) throws Exception {
+    private void Write(String format, Object value) {
         var channel = Channels.newChannel(connection.GetOutputStream());
         var buffer = ByteBufferStruct.Pack(format, new Object[]{ value });
-        channel.write(buffer);
+        try {
+            channel.write(buffer);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private String ReadByteString() {
@@ -64,7 +71,7 @@ public class Interface {
      * @return Return type.
      * @throws Exception
      */
-    private Object Read(Object obj_type) throws Exception {
+    private Object Read(Object obj_type) {
         return Io.Read(connection.GetInputStream(), device.endianness, device.size_t, obj_type);
     }
 
@@ -73,12 +80,16 @@ public class Interface {
      * @param index Method index.
      * @throws Exception
      */
-    private void Select(int index) throws Exception {
+    private void Select(int index) {
         this.Write("B", index);
     } 
 
     private void Load(InputStream handle) {
+        var mapper = new ObjectMapper(new YAMLFactory());
+        mapper.findAndRegisterModules();
+        // Interface iterface = mapper.readValue(handle, Interface.class);
         // TODO: implement yaml loader
+        throw new RuntimeException("Not implementd");
     }
 
     /**

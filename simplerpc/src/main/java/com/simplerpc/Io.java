@@ -59,11 +59,12 @@ public class Io {
         do {
             try {
                 value = (byte) stream.read();
+                if (value == stop) break;
                 buffer.write(value);
             } catch (IOException e) {
                 break;
             }
-        } while (value != stop);
+        } while (true);
         return buffer.toByteArray();
     }
 
@@ -79,7 +80,7 @@ public class Io {
      * @return Value of type {basic_type}.
      * @throws Exception
      */
-    private static Object ReadBasic(InputStream stream, char endianness, char basic_type) throws Exception {
+    private static Object ReadBasic(InputStream stream, char endianness, char basic_type) {
         if (basic_type == 's')
             return ReadByteString(stream);
         
@@ -97,7 +98,7 @@ public class Io {
      * @return Object of type {obj_type}.
      * @throws Exception
      */
-    public static Object Read(InputStream stream, char endianness, char size_t, Object obj_type) throws Exception {
+    public static Object Read(InputStream stream, char endianness, char size_t, Object obj_type) {
         if (obj_type == null) {
             return null;
         } else if (obj_type instanceof Tuple) {
