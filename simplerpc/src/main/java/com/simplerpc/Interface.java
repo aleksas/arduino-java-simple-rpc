@@ -34,16 +34,16 @@ public class Interface {
             this.Open(load);
     }
 
-    private static void AssertProtocol(String protocol) throws Exception {
+    private static void AssertProtocol(String protocol) {
         if (!protocol.equals(PROTOCOL))
-            throw new Exception("Invalid protocol header");
+            throw new RuntimeException("Invalid protocol header");
     }
 
-    private static void AssertVersion(int[] version) throws Exception {
+    private static void AssertVersion(int[] version) {
         if (!Arrays.equals(version, VERSION)) {
             String vesionString = IntStream.of(version).mapToObj(i -> String.valueOf(i)).collect(Collectors.joining(",")) ;
             String refVesionString = IntStream.of(VERSION).mapToObj(i -> String.valueOf(i)).collect(Collectors.joining(","));
-            throw new Exception(String.format("Version mismatch (device: %s, client: %s)", refVesionString, vesionString)); 
+            throw new RuntimeException(String.format("Version mismatch (device: %s, client: %s)", refVesionString, vesionString)); 
         }
     }
 
@@ -97,7 +97,7 @@ public class Interface {
      * @return Methods.
      * @throws Exception
      */
-    private void GetMethods() throws Exception {
+    private void GetMethods() {
         Select(LIST_REQUEST);  
         
         AssertProtocol(ReadByteString());

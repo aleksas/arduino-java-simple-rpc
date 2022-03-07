@@ -1,11 +1,10 @@
 package com.simplerpc;
 
-import java.util.Collections;
-import java.util.Map;
+import java.util.HashMap;
 
 public class Device {
     char endianness = '<';
-    Map<String, Method> methods = Collections.emptyMap();
+    HashMap<String, Method> methods = new HashMap<String, Method>();
     String protocol = "";
     char size_t = 'H';
     int[] version = {0, 0, 0};
