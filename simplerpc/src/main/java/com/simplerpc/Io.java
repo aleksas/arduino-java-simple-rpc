@@ -52,23 +52,25 @@ public class Io {
      * @param stream Stream object.
      * @param stop Delimiter.
      * @return Byte.
+     * @throws IOException
      */
-    private static byte[] ReadBytesUntil(InputStream stream, byte stop) {
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        byte value;
-        do {
-            try {
-                value = (byte) stream.read();
-                if (value == stop) break;
-                buffer.write(value);
-            } catch (IOException e) {
-                break;
-            }
-        } while (true);
-        return buffer.toByteArray();
+    private static byte[] ReadBytesUntil(InputStream stream, byte stop) throws IOException {
+        try (ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
+            byte value;
+            do {
+                try {
+                    value = (byte) stream.read();
+                    if (value == stop) break;
+                    buffer.write(value);
+                } catch (IOException e) {
+                    break;
+                }
+            } while (true);
+            return buffer.toByteArray();
+        }
     }
 
-    public static String ReadByteString(InputStream stream) {
+    public static String ReadByteString(InputStream stream) throws IOException {
         return new String(ReadBytesUntil(stream, (byte) '\0'), StandardCharsets.UTF_8);
     }
 
@@ -78,9 +80,10 @@ public class Io {
      * @param endianness Endianness.
      * @param basic_type Type of {value}.
      * @return Value of type {basic_type}.
+     * @throws IOException
      * @throws Exception
      */
-    private static Object ReadBasic(InputStream stream, char endianness, char basic_type) {
+    private static Object ReadBasic(InputStream stream, char endianness, char basic_type) throws IOException {
         if (basic_type == 's')
             return ReadByteString(stream);
         
@@ -96,9 +99,10 @@ public class Io {
      * @param size_t Type of size_t.
      * @param obj_type Type object.
      * @return Object of type {obj_type}.
+     * @throws IOException
      * @throws Exception
      */
-    public static Object Read(InputStream stream, char endianness, char size_t, Object obj_type) {
+    public static Object Read(InputStream stream, char endianness, char size_t, Object obj_type) throws IOException {
         if (obj_type == null) {
             return null;
         } else if (obj_type instanceof Tuple) {

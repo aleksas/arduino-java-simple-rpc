@@ -9,8 +9,6 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Map;
 
-import javax.xml.catalog.Catalog;
-
 public class ByteBufferStruct {
     private static final String FAILED_TO_READ_TYPE_COMPLETELY = "Failed to read type completely";
 

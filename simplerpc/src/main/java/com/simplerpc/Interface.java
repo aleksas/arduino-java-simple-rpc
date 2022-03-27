@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.simplerpc.serial.Serial;
 
-public class Interface {
+public class Interface  implements AutoCloseable {
     private static String PROTOCOL = "simpleRPC";
     private static int LIST_REQUEST = 0xff;
     
@@ -31,7 +31,7 @@ public class Interface {
         this.device = new Device();
 
         if (autoconnect)
-            this.Open(load);
+            this.open(load);
     }
 
     private static void AssertProtocol(String protocol) {
@@ -51,40 +51,53 @@ public class Interface {
         return this.connection.isOpen();
     }
 
-    private void Write(String format, Object value) {
-        var channel = Channels.newChannel(connection.GetOutputStream());
-        var buffer = ByteBufferStruct.Pack(format, new Object[]{ value });
-        try {
-            channel.write(buffer);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    private void write(String format, Object value) throws IOException {
+        try (var stream  = connection.getOutputStream()) {
+            try (var channel = Channels.newChannel(stream)) {
+                var buffer = ByteBufferStruct.Pack(format, new Object[]{ value });
+
+                try {
+                    channel.write(buffer);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                // TODO Get rid of sleep
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+            }
         }
     }
 
-    private String ReadByteString() {
-        return Io.ReadByteString(connection.GetInputStream());
+    private String readByteString() throws IOException {
+        return Io.ReadByteString(connection.getInputStream());
     }
 
     /**
      * Read a return value from a remote procedure call.
      * @param obj_type Return type.
      * @return Return type.
+     * @throws IOException
      * @throws Exception
      */
-    private Object Read(Object obj_type) {
-        return Io.Read(connection.GetInputStream(), device.endianness, device.size_t, obj_type);
+    private Object read(Object obj_type) throws IOException {
+        return Io.Read(connection.getInputStream(), device.endianness, device.size_t, obj_type);
     }
 
     /**
      * Initiate a remote procedure call, select the method.
      * @param index Method index.
+     * @throws IOException
      * @throws Exception
      */
-    private void Select(int index) {
-        this.Write("B", index);
+    private void select(int index) throws IOException {
+        this.write("B", index);
     } 
 
-    private void Load(InputStream handle) {
+    private void load(InputStream handle) {
         var mapper = new ObjectMapper(new YAMLFactory());
         mapper.findAndRegisterModules();
         // Interface iterface = mapper.readValue(handle, Interface.class);
@@ -95,29 +108,30 @@ public class Interface {
     /**
      * Get remote procedure call methods.
      * @return Methods.
+     * @throws IOException
      * @throws Exception
      */
-    private void GetMethods() {
-        Select(LIST_REQUEST);  
+    private void getMethods() throws IOException {
+        select(LIST_REQUEST);  
         
-        AssertProtocol(ReadByteString());
+        AssertProtocol(readByteString());
         device.protocol = PROTOCOL;
 
         var version = new int[]{
-            ((Integer)Read("B")).intValue(),
-            ((Integer)Read("B")).intValue(),
-            ((Integer)Read("B")).intValue()
+            ((Integer)read("B")).intValue(),
+            ((Integer)read("B")).intValue(),
+            ((Integer)read("B")).intValue()
         };
         AssertVersion(version);
 
         device.version = VERSION;
 
-        var endianness_size = ReadByteString();
+        var endianness_size = readByteString();
         device.endianness = endianness_size.charAt(0);
         device.size_t = endianness_size.charAt(1);
 
         for (int i = 0;; i++) {
-            var line = ReadByteString();
+            var line = readByteString();
             if (line.isEmpty())
                 break;
 
@@ -128,28 +142,34 @@ public class Interface {
         }
     }
 
-    public void Open() throws Exception {
-        Open(null);
+    public void open() throws Exception {
+        open(null);
     }
 
-    public void Open(InputStream handle) throws Exception {
+    public void open(InputStream handle) throws Exception {
         try {
             Thread.sleep(wait * 1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         
-        connection.Open();
+        connection.open();
 
         if (handle != null)
-            Load(handle);
+            load(handle);
         else
-            GetMethods();
+            getMethods();
             
         for (var method : device.methods.values()){
             // TODO: generate function.
         }
             // setattr(
             //     self, method['name'], MethodType(make_function(method), self))
+    }
+
+    @Override
+    public void close() throws Exception {
+        if (connection != null)
+            connection.close();
     }
 }
