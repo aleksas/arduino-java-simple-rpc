@@ -2,9 +2,11 @@ package com.simplerpc;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -135,10 +137,19 @@ public class Interface  implements AutoCloseable {
         }
     }
 
+    /**
+     * Connect to device.
+     * @throws Exception
+     */
     public void open() throws Exception {
         open(null);
     }
 
+    /**
+     * Connect to device.
+     * @param handle Open file handle.
+     * @throws Exception
+     */
     public void open(InputStream handle) throws Exception {
         try {
             Thread.sleep(wait * 1000);
@@ -160,9 +171,57 @@ public class Interface  implements AutoCloseable {
             //     self, method['name'], MethodType(make_function(method), self))
     }
 
+    
+    /**
+     * Disconnect from device.
+     * @throws Exception
+     */
     @Override
     public void close() throws Exception {
         if (connection != null)
             connection.close();
+    }
+
+    /**
+     * Execute a method.
+     * @param methodName Method name.
+     * @param parameters Method parameters.
+     * @return Return value of the method.
+     * @throws IOException
+     */
+    public Object call_method(String methodName, Object... arguments) throws IOException {
+        if (!device.methods.containsKey(methodName))
+            throw new RuntimeException("Invalid method name: %s.".formatted(methodName));
+        
+        var method = device.methods.get(methodName);
+        var args = Arrays.asList(arguments);
+
+        if (method.parameters.size() != args.size())
+            throw new RuntimeException("%s expected %d arguments, got %d.".formatted(methodName, method.parameters.size(), args.size()));
+        
+        // Call the method.
+        this.select(method.index);
+        
+        // Provide parameters (if any).
+        if (method.parameters.size() != 0) {
+            for (int i = 0; i < method.parameters.size(); i++) {
+                this.write((String)method.parameters.get(i).fmt, args.get(i));
+            }
+        }
+
+        // Read return value (if any).
+        if (method.ret.fmt != null) {
+            return this.read((String) method.ret.fmt);
+        }
+
+        return null;
+    }
+
+    /**
+     * Save the interface definition to a file.
+     * @param stream Output file stream.
+     */
+    public void save(OutputStream stream) {
+        throw new RuntimeException("Not implemented.");
     }
 }

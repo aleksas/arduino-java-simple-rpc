@@ -1,5 +1,7 @@
 package com.simplerpc;
 
+import java.io.IOException;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,7 +40,12 @@ public abstract class DeviceTest<T extends Interface> {
         Assert.assertEquals(iface.device.version, Interface.VERSION);
     }
     
-    // public void testPing() {
-    //     Assert.assertEquals(this.iface.methods.get("ping"), 3);
-    // }
+    @Test
+    public void testPing() {
+         try {
+            Assert.assertEquals(this.iface.call_method("ping", 3), 3);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
