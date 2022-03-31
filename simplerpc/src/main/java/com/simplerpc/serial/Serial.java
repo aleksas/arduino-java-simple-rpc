@@ -20,15 +20,16 @@ public class Serial implements AutoCloseable {
         if (serial == null) {            
             serial = SerialPort.getCommPort(device);
             serial.setBaudRate(baudrate);
-            serial.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, 1000, 1000);
         }
 
         if (!do_not_open)
             serial.openPort();
     }
+    
     public void open() {
         if (!serial.openPort())
             throw new RuntimeException("Could not open port");
+        serial.setComPortTimeouts(SerialPort.TIMEOUT_WRITE_BLOCKING | SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 5000, 5000);
     }
 
     public boolean isOpen() {

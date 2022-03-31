@@ -21,29 +21,21 @@ public abstract class DeviceTest<T extends Interface> {
 
     @Test
     public void test0PreOpen() throws Exception {
-        //try (T iface = createInstance()) {
-            System.out.println("EXAMPLE");
+        System.out.println("EXAMPLE");
 
-            Assert.assertFalse(iface.isOpen());
-            Assert.assertTrue(iface.device.methods.isEmpty());
-        //}
+        Assert.assertFalse(iface.isOpen());
+        Assert.assertTrue(iface.device.methods.isEmpty());
     }
 
     @Test
     public void test1Open() throws Exception {
-        //try (T iface = createInstance()) {
-            iface.open();
-            Assert.assertTrue(iface.isOpen());
-        //}
-        //Assert.assertFalse(this.iface.device.methods.isEmpty());
+        iface.open();
+        Assert.assertTrue(iface.isOpen());
     }
 
     @Test
     public void test2Version() throws Exception {
-        //try (T iface = createInstance()) {
-            //iface.open();
-            Assert.assertEquals(iface.device.version, Interface.VERSION);
-        //}
+        Assert.assertEquals(iface.device.version, Interface.VERSION);
     }
     
     // public void testPing() {

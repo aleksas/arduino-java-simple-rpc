@@ -61,13 +61,6 @@ public class Interface  implements AutoCloseable {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-
-                // TODO Get rid of sleep
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e1) {
-                    e1.printStackTrace();
-                }
             }
         }
     }

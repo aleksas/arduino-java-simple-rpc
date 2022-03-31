@@ -122,6 +122,7 @@ public class Io {
             return Read(stream, endianness, size_t, Arrays.asList(obj_type));    
         }
 
-        return ReadBasic(stream, endianness, ((String) obj_type).charAt(0));
+        var out = ReadBasic(stream, endianness, ((String) obj_type).charAt(0));
+        return out;
     }
 }
