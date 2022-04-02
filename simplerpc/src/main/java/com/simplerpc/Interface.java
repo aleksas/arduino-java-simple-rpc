@@ -174,12 +174,12 @@ public class Interface  implements AutoCloseable {
     
     /**
      * Disconnect from device.
-     * @throws Exception
      */
     @Override
-    public void close() throws Exception {
+    public void close() {
         if (connection != null)
             connection.close();
+        device.methods.clear();
     }
 
     /**

@@ -45,7 +45,7 @@ public class Serial implements AutoCloseable {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         serial.closePort();
     }
 }
