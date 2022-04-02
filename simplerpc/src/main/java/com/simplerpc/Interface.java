@@ -11,7 +11,6 @@ import java.util.stream.IntStream;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.simplerpc.serial.Serial;
 
 public class Interface  implements AutoCloseable {
     private static String PROTOCOL = "simpleRPC";
@@ -19,16 +18,16 @@ public class Interface  implements AutoCloseable {
     
     public static int[] VERSION = {3, 0, 0};
 
-    public int baudrate = 9600;
     public int wait = 2;
     public boolean autoconnect = true;
     public InputStream load = null; 
-    public Serial connection = null; 
+    public Transport transport = null; 
+    //public int baudrate = 9600;
     public Device device = null; 
 
-    public Interface(String device, int baudrate, int wait, boolean autoconnect, InputStream load) throws Exception {
+    public Interface(Transport transport, int wait, boolean autoconnect, InputStream load) throws Exception {
         this.wait = wait;
-        this.connection = new Serial(device, true, baudrate); //serial_for_url(device, true, baudrate);
+        this.transport = transport;//new Serial(device, true, baudrate); //serial_for_url(device, true, baudrate);
         this.device = new Device();
 
         if (autoconnect)
@@ -49,11 +48,11 @@ public class Interface  implements AutoCloseable {
     }
 
     public boolean isOpen() {
-        return this.connection.isOpen();
+        return this.transport.isOpen();
     }
 
     private void write(String format, Object value) throws IOException {
-        try (var stream  = connection.getOutputStream()) {
+        try (var stream  = transport.getOutputStream()) {
             try (var channel = Channels.newChannel(stream)) {
                 var buffer = ByteBufferStruct.Pack(format, new Object[]{ value });
 
@@ -67,7 +66,7 @@ public class Interface  implements AutoCloseable {
     }
 
     private String readByteString() throws IOException {
-        return Io.ReadByteString(connection.getInputStream());
+        return Io.ReadByteString(transport.getInputStream());
     }
 
     /**
@@ -78,7 +77,7 @@ public class Interface  implements AutoCloseable {
      * @throws Exception
      */
     private Object read(Object obj_type) throws IOException {
-        return Io.Read(connection.getInputStream(), device.endianness, device.size_t, obj_type);
+        return Io.Read(transport.getInputStream(), device.endianness, device.size_t, obj_type);
     }
 
     /**
@@ -156,7 +155,7 @@ public class Interface  implements AutoCloseable {
             e.printStackTrace();
         }
         
-        connection.open();
+        transport.open();
 
         if (handle != null)
             load(handle);
@@ -170,8 +169,8 @@ public class Interface  implements AutoCloseable {
      */
     @Override
     public void close() {
-        if (connection != null)
-            connection.close();
+        if (transport != null)
+            transport.close();
         device.methods.clear();
     }
 

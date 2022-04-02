@@ -4,8 +4,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import com.fazecast.jSerialComm.SerialPort;
+import com.simplerpc.Transport;
 
-public class Serial implements AutoCloseable {
+public class Serial implements Transport, AutoCloseable {
     public SerialPort serial = null;
 
     public Serial(String device, boolean do_not_open, int baudrate) {
