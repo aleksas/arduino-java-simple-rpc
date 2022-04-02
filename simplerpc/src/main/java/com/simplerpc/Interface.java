@@ -162,12 +162,6 @@ public class Interface  implements AutoCloseable {
             load(handle);
         else
             getMethods();
-            
-        for (var method : device.methods.values()){
-            // TODO: generate function.
-        }
-            // setattr(
-            //     self, method['name'], MethodType(make_function(method), self))
     }
 
     
