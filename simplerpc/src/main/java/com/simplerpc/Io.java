@@ -32,7 +32,7 @@ public class Io {
         }
     } 
 
-    private static void WriteBasic(OutputStream stream, char endianness, char basic_type, Object value) throws Exception {
+    public static void WriteBasic(OutputStream stream, char endianness, char basic_type, Object value) throws Exception {
         if (basic_type == 's') {
             stream.write(((String) value).getBytes());
             stream.write((byte) '\0');
@@ -83,7 +83,7 @@ public class Io {
      * @throws IOException
      * @throws Exception
      */
-    private static Object ReadBasic(InputStream stream, char endianness, char basic_type) throws IOException {
+    public static Object ReadBasic(InputStream stream, char endianness, char basic_type) throws IOException {
         if (basic_type == 's')
             return ReadByteString(stream);
         
