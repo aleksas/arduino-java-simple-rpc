@@ -113,7 +113,15 @@ public class Io {
                 tmp.add(Read(stream, endianness, size_t, object));
             return new Tuple(tmp.toArray());
         } else if (obj_type instanceof List){
-            Integer length = (Integer) ReadBasic(stream, endianness, size_t);
+            var leno = ReadBasic(stream, endianness, size_t);
+            Integer length = null;
+            if (leno instanceof Integer) {
+                length = (Integer) leno;
+            } else if (leno instanceof Short) {
+                length = Integer.valueOf((Short) leno);
+            } else 
+                throw new RuntimeException("Not implemented");
+            
             ArrayList<Object> tmp = new ArrayList<Object>();
             for (var object: (List) obj_type)
                 for (int i = 0; i < length; i++)
