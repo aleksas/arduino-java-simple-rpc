@@ -26,17 +26,25 @@ public class IoTest {
     }
 
     @Test
-    public void testBasicString() throws Exception {
-        testInvarianceBasic('<', 's', "abcdef\0".getBytes(), "abcdef");
+    public void testReadBytesUntil() throws Exception {
+        try (ByteArrayInputStream stream = new ByteArrayInputStream("abcdef\0abc".getBytes())) {
+            var val = Io.ReadBytesUntil(stream, (byte) '\0');
+            assertArrayEquals(val, "abcdef".getBytes());
+        }
     }
 
-    // @Test
-    // public void testBasicIntLe() throws Exception {
-    //     testInvarianceBasic('<', 'i', "\2\0\0\0".getBytes(), 2);
-    // }
+    @Test
+    public void testBasicString() throws Exception {
+        testInvarianceBasic('<', 's', "abcdef\0".getBytes(), "abcdef".getBytes());
+    }
 
-    // @Test
-    // public void testBasicIntBe() throws Exception {
-    //     testInvarianceBasic('>', 'i', "\0\0\0\2".getBytes(), 2);
-    // }
+    @Test
+    public void testBasicIntLe() throws Exception {
+        testInvarianceBasic('<', 'i', "\2\0\0\0".getBytes(), 2);
+    }
+
+    @Test
+    public void testBasicIntBe() throws Exception {
+        testInvarianceBasic('>', 'i', "\0\0\0\2".getBytes(), 2);
+    }
 }

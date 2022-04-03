@@ -80,27 +80,27 @@ public class ProtocolTest {
 
     @Test public void testParseTypeNameBasic() {
         assertEquals("byte[]", Protocol.TypeName("c"));
-        assertEquals("int", Protocol.TypeName("i"));
+        assertEquals("Integer", Protocol.TypeName("i"));
         assertEquals("boolean", Protocol.TypeName("?"));
-        assertEquals("float", Protocol.TypeName("f"));
+        assertEquals("Float", Protocol.TypeName("f"));
     }
 
     @Test public void testParseTypeNameTupleBasic() {
-        assertEquals("[int, byte[]]", Protocol.TypeName(Arrays.asList("i", "c")));
-        assertEquals("[boolean, float]", Protocol.TypeName(Arrays.asList("?", "f")));
+        assertEquals("[Integer, byte[]]", Protocol.TypeName(Arrays.asList("i", "c")));
+        assertEquals("[boolean, Float]", Protocol.TypeName(Arrays.asList("?", "f")));
     }
 
     @Test public void testParseTypeNameListBasic() {
-        assertEquals("[[int]]", Protocol.TypeName(Arrays.asList(Arrays.asList("i"))));
-        assertEquals("[boolean, float]", Protocol.TypeName(Arrays.asList("?", "f")));
+        assertEquals("[[Integer]]", Protocol.TypeName(Arrays.asList(Arrays.asList("i"))));
+        assertEquals("[boolean, Float]", Protocol.TypeName(Arrays.asList("?", "f")));
     }
 
     @Test public void testParseTypeNameObjectBasic() {
-        assertEquals("[(int)]", Protocol.TypeName(Arrays.asList(new Tuple("i"))));
+        assertEquals("[(Integer)]", Protocol.TypeName(Arrays.asList(new Tuple("i"))));
     }
 
     @Test public void testParseTypeNameComplex() {
-        assertEquals("[((byte[], byte[]), byte[]), int, ([byte[]])]", 
+        assertEquals("[((byte[], byte[]), byte[]), Integer, ([byte[]])]", 
             Protocol.TypeName(
                 Arrays.asList(
                     new Tuple(new Tuple("c", "c"), "c"),
@@ -115,7 +115,7 @@ public class ProtocolTest {
         var method = new Method(1, "method1");
 
         method.parameters.add(new Parameter("arg0", "c", "byte[]"));
-        method.parameters.add(new Parameter("arg1", "f", "float"));
+        method.parameters.add(new Parameter("arg1", "f", "Float"));
         
         assertEquals(method, Protocol.ParseSignature(1, ":c f"));
     }
@@ -124,9 +124,9 @@ public class ProtocolTest {
         var method = new Method(2, "method2");
 
         method.parameters.add(new Parameter("arg0", Arrays.asList("c"), "[byte[]]"));
-        method.parameters.add(new Parameter("arg1", new Tuple("c", "f"), "(byte[], float)"));
+        method.parameters.add(new Parameter("arg1", new Tuple("c", "f"), "(byte[], Float)"));
         method.ret.fmt = new Tuple("f", "f");
-        method.ret.tyme_name = "(float, float)";
+        method.ret.tyme_name = "(Float, Float)";
         
         assertEquals(method, Protocol.ParseSignature(2, "(ff): [c] (cf)"));
     }

@@ -20,21 +20,22 @@ public class Io {
      * @param c_type C type.
      * @return Casting function.
      */
-    public static Class Cast(char c_type) {
+    public static Class TypeClass(char c_type) {
         if (c_type == '?')
             return boolean.class;
         else {
             if (Arrays.asList('c', 's').contains(c_type))
                 return byte[].class;
             if (Arrays.asList('f', 'd').contains(c_type))
-                return float.class;
-            return int.class;
+                return Float.class;
+            return Integer.class;
         }
     } 
 
     public static void WriteBasic(OutputStream stream, char endianness, char basic_type, Object value) throws Exception {
         if (basic_type == 's') {
-            stream.write(((String) value).getBytes());
+            assert (value instanceof byte[]);
+            stream.write((byte[])value);
             stream.write((byte) '\0');
             return;
         }
@@ -42,7 +43,7 @@ public class Io {
 
         String full_type = (String.valueOf(endianness) + basic_type);        
 
-        ByteBuffer buffer = ByteBufferStruct.Pack(full_type, Arrays.asList(Cast(basic_type).cast(value)).toArray());
+        ByteBuffer buffer = ByteBufferStruct.Pack(full_type, Arrays.asList(TypeClass(basic_type).cast(value)).toArray());
         
         Channels.newChannel(stream).write(buffer);
     }
@@ -54,7 +55,7 @@ public class Io {
      * @return Byte.
      * @throws IOException
      */
-    private static byte[] ReadBytesUntil(InputStream stream, byte stop) throws IOException {
+    public static byte[] ReadBytesUntil(InputStream stream, byte stop) throws IOException {
         try (ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
             byte value;
             do {
@@ -70,8 +71,8 @@ public class Io {
         }
     }
 
-    public static String ReadByteString(InputStream stream) throws IOException {
-        return new String(ReadBytesUntil(stream, (byte) '\0'), StandardCharsets.UTF_8);
+    public static byte[] ReadByteString(InputStream stream) throws IOException {
+        return ReadBytesUntil(stream, (byte) '\0');
     }
 
     /**

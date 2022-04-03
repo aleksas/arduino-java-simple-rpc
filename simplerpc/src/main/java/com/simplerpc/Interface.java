@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -65,7 +66,7 @@ public class Interface  implements AutoCloseable {
         }
     }
 
-    private String readByteString() throws IOException {
+    private byte[] readByteString() throws IOException {
         return Io.ReadByteString(transport.getInputStream());
     }
 
@@ -106,8 +107,8 @@ public class Interface  implements AutoCloseable {
      */
     private void getMethods() throws IOException {
         select(LIST_REQUEST);  
-        
-        AssertProtocol(readByteString());
+
+        AssertProtocol(new String(readByteString(), StandardCharsets.UTF_8));
         device.protocol = PROTOCOL;
 
         var version = new int[]{
@@ -120,15 +121,15 @@ public class Interface  implements AutoCloseable {
         device.version = VERSION;
 
         var endianness_size = readByteString();
-        device.endianness = endianness_size.charAt(0);
-        device.size_t = endianness_size.charAt(1);
+        device.endianness = (char) endianness_size[0];
+        device.size_t = (char) endianness_size[1];
 
         for (int i = 0;; i++) {
             var line = readByteString();
-            if (line.isEmpty())
+            if (line.length == 0)
                 break;
 
-            var buffer = ByteBuffer.wrap(line.getBytes());
+            var buffer = ByteBuffer.wrap(line);
             
             var method = Protocol.ParseLine(i, buffer);
             device.methods.put(method.name, method);
