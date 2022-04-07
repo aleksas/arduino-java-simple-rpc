@@ -64,7 +64,7 @@ public class IoTest {
 
     @Test
     public void testListChar() throws Exception {
-        testInvariance('<', 'h', Arrays.asList('c'), "\3\0a\0c".getBytes(), Arrays.asList((byte)'a', (byte)'\0', (byte)'c'));
+        testInvariance('<', 'h', Arrays.asList("c"), "\3\0a\0c".getBytes(), Arrays.asList((byte)'a', (byte)'\0', (byte)'c'));
     }
 
 

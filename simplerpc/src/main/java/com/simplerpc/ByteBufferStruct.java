@@ -21,6 +21,7 @@ public class ByteBufferStruct {
     );
 
     public static Map<Character, Integer> TYPE_SIZES = Map.ofEntries(
+        Map.entry('c', 1), // char
         Map.entry('b', 1), // signed char
         Map.entry('B', 1), // unsigned char
         Map.entry('?', 1), // Bool
@@ -141,6 +142,9 @@ public class ByteBufferStruct {
             Object o;
 
             switch (c) {
+                case 'c':
+                    o = buffer.get();
+                    break;
                 case 'b':
                     o = buffer.get();
                     break;

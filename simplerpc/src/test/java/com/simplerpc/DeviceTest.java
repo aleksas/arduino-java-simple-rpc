@@ -47,7 +47,7 @@ public abstract class DeviceTest<T extends Interface> {
 
     @Test
     public void test04Type1() {
-        Assert.assertEquals(iface.device.methods.get("ping").ret.tyme_name, "int");
+        Assert.assertEquals(iface.device.methods.get("ping").ret.tyme_name, "Integer");
     }
 
     @Test
@@ -57,7 +57,7 @@ public abstract class DeviceTest<T extends Interface> {
 
     @Test
     public void test06Param() {
-        Assert.assertEquals(iface.device.methods.get("ping").parameters.get(0).tyme_name, "int");
+        Assert.assertEquals(iface.device.methods.get("ping").parameters.get(0).tyme_name, "Integer");
     }
 
     @Test
