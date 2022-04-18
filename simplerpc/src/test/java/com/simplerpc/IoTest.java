@@ -29,14 +29,13 @@ public class IoTest {
         try (ByteArrayInputStream stream = new ByteArrayInputStream(data)) {
             var obj = Io.Read(stream, endianness, size_t, object_def);
 
-            assertEquals(obj, object);
+            assert(obj.equals(object));
         }
 
-        // try (ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
-        //     Io.Write(stream, endianness, basic_type, value);
-        //     var d = stream.toByteArray();
-        //     assertArrayEquals(stream.toByteArray(), data);
-        // }
+        try (ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
+            Io.Write(stream, endianness, size_t, object_def, object);
+            assertArrayEquals(stream.toByteArray(), data);
+        }
     }
 
     @Test
@@ -66,6 +65,11 @@ public class IoTest {
     public void testListChar() throws Exception {
         testInvariance('<', 'h', Arrays.asList("c"), "\3\0a\0c".getBytes(), Arrays.asList((byte)'a', (byte)'\0', (byte)'c'));
     }
+
+    // @Test
+    // public void testListNibble() throws Exception {
+    //     testInvariance('<', 'h', Arrays.asList("h"), "\3\0\1\0\2\0\3\0".getBytes(), Arrays.asList(1, 2, 3));
+    // }
 
 
 // def test_list_char() -> None:

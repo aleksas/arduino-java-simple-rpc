@@ -79,14 +79,14 @@ public class ProtocolTest {
     }
 
     @Test public void testParseTypeNameBasic() {
-        assertEquals("byte[]", Protocol.TypeName("c"));
+        assertEquals("Byte[]", Protocol.TypeName("c"));
         assertEquals("Integer", Protocol.TypeName("i"));
         assertEquals("boolean", Protocol.TypeName("?"));
         assertEquals("Float", Protocol.TypeName("f"));
     }
 
     @Test public void testParseTypeNameTupleBasic() {
-        assertEquals("[Integer, byte[]]", Protocol.TypeName(Arrays.asList("i", "c")));
+        assertEquals("[Integer, Byte[]]", Protocol.TypeName(Arrays.asList("i", "c")));
         assertEquals("[boolean, Float]", Protocol.TypeName(Arrays.asList("?", "f")));
     }
 
@@ -100,7 +100,7 @@ public class ProtocolTest {
     }
 
     @Test public void testParseTypeNameComplex() {
-        assertEquals("[((byte[], byte[]), byte[]), Integer, ([byte[]])]", 
+        assertEquals("[((Byte[], Byte[]), Byte[]), Integer, ([Byte[]])]", 
             Protocol.TypeName(
                 Arrays.asList(
                     new Tuple(new Tuple("c", "c"), "c"),
@@ -114,7 +114,7 @@ public class ProtocolTest {
     @Test public void testParseSignatureBasic() {
         var method = new Method(1, "method1");
 
-        method.parameters.add(new Parameter("arg0", "c", "byte[]"));
+        method.parameters.add(new Parameter("arg0", "c", "Byte[]"));
         method.parameters.add(new Parameter("arg1", "f", "Float"));
         
         assertEquals(method, Protocol.ParseSignature(1, ":c f"));
@@ -123,8 +123,8 @@ public class ProtocolTest {
     @Test public void testParseSignatureComplex() {
         var method = new Method(2, "method2");
 
-        method.parameters.add(new Parameter("arg0", Arrays.asList("c"), "[byte[]]"));
-        method.parameters.add(new Parameter("arg1", new Tuple("c", "f"), "(byte[], Float)"));
+        method.parameters.add(new Parameter("arg0", Arrays.asList("c"), "[Byte[]]"));
+        method.parameters.add(new Parameter("arg1", new Tuple("c", "f"), "(Byte[], Float)"));
         method.ret.fmt = new Tuple("f", "f");
         method.ret.tyme_name = "(Float, Float)";
         

@@ -24,7 +24,7 @@ public class Io {
             return boolean.class;
         else {
             if (Arrays.asList('c', 's').contains(c_type))
-                return byte[].class;
+                return Byte[].class;
             if (Arrays.asList('f', 'd').contains(c_type))
                 return Float.class;
             return Integer.class;
@@ -42,7 +42,13 @@ public class Io {
 
         String full_type = (String.valueOf(endianness) + basic_type);        
 
-        ByteBuffer buffer = ByteBufferStruct.Pack(full_type, Arrays.asList(TypeClass(basic_type).cast(value)).toArray());
+        Object[] arr = null;
+        if (value.getClass().isArray())
+            arr = (Object[]) value;
+        else
+            arr = Arrays.asList(TypeClass(basic_type).cast(value)).toArray();
+
+        ByteBuffer buffer = ByteBufferStruct.Pack(full_type, arr);
         
         Channels.newChannel(stream).write(buffer);
     }
@@ -107,7 +113,7 @@ public class Io {
             return null;
         } else if (obj_type instanceof Tuple) {
             var tuple = (Tuple) obj_type;
-            ArrayList<Object> tmp = new ArrayList<Object>();
+            var tmp = new ArrayList<Object>();
             for (var object: tuple.toList())
                 tmp.add(Read(stream, endianness, size_t, object));
             return new Tuple(tmp.toArray());
@@ -121,16 +127,51 @@ public class Io {
             } else 
                 throw new RuntimeException("Not implemented");
             
-            ArrayList<Object> tmp = new ArrayList<Object>();
+            var tmp = new ArrayList<Object>();
             for (var object: (List) obj_type)
                 for (int i = 0; i < length; i++)
                     tmp.add(Read(stream, endianness, size_t, object));
-            return Arrays.asList(tmp);
+            return tmp;
         } else if (obj_type instanceof Object[]) {
             return Read(stream, endianness, size_t, Arrays.asList(obj_type));    
         }
 
         var out = ReadBasic(stream, endianness, ((String) obj_type).charAt(0));
         return out;
+    }
+
+    /**
+     * Write an object to a stream.
+     * @param stream Stream object.
+     * @param endianness Endianness.
+     * @param size_t Type of size_t.
+     * @param obj_type Type object.
+     * @return Object of type {obj_type}.
+     * @throws Exception
+     */
+    public static void Write(OutputStream stream, char endianness, char size_t, Object obj_type, Object object) throws Exception {
+        if (obj_type instanceof List)
+            WriteBasic(stream, endianness, size_t, Math.floorDiv(((List)object).size(), ((List)obj_type).size()));
+        if (obj_type instanceof Iterable) {
+            var obj_list = new ArrayList<Object>();
+            ((Iterable) object).forEach(obj_list::add);
+
+            var obj_type_list = new ArrayList<Object>();
+
+            for (int i = 0; i < obj_list.size(); i++) {
+                ((Iterable) obj_type).forEach(obj_type_list::add);
+            }
+            
+            for (int i = 0; i < obj_list.size(); i++) {
+                var item = obj_list.get(i);
+                var item_type = obj_type_list.get(i);
+                var item_arr = java.lang.reflect.Array.newInstance(item.getClass(), 1);
+
+                ((Object[]) item_arr)[0] = item;
+                Write(stream, endianness, size_t, item_type, item_arr);
+            }
+        }
+        else
+              WriteBasic(stream, endianness, ((String) obj_type).charAt(0), object);
     }
 }

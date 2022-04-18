@@ -70,6 +70,9 @@ public class ByteBufferStruct {
             int pos = i - offset;
 
             switch (c) {
+                case 'c':
+                    buffer.put(((Byte) object[pos]).byteValue());
+                    break;
                 case 'b':
                     buffer.put((byte) object[pos]);
                     break;
@@ -80,7 +83,7 @@ public class ByteBufferStruct {
                     buffer.put((byte)(((boolean) object[pos])?1:0));
                     break;
                 case 'h':
-                    buffer.putShort((short) object[pos]);
+                    buffer.putShort(Integer.valueOf((int)object[pos]).shortValue());
                     break;
                 case 'H':
                     buffer.putShort((short) (((int) object[pos]) & 0xffff));
