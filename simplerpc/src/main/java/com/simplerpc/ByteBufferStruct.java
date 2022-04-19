@@ -83,7 +83,7 @@ public class ByteBufferStruct {
                     buffer.put((byte)(((boolean) object[pos])?1:0));
                     break;
                 case 'h':
-                    buffer.putShort(Integer.valueOf((int)object[pos]).shortValue());
+                    buffer.putShort((Short)object[pos]);
                     break;
                 case 'H':
                     buffer.putShort((short) (((int) object[pos]) & 0xffff));

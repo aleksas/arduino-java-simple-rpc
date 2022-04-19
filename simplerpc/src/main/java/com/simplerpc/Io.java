@@ -25,8 +25,12 @@ public class Io {
         else {
             if (Arrays.asList('c', 's').contains(c_type))
                 return Byte[].class;
-            if (Arrays.asList('f', 'd').contains(c_type))
+            if (c_type == 'f')
                 return Float.class;
+            if (c_type == 'd')
+                return Double.class;
+            if (c_type == 'h')
+                return Short.class;
             return Integer.class;
         }
     } 
@@ -151,7 +155,7 @@ public class Io {
      */
     public static void Write(OutputStream stream, char endianness, char size_t, Object obj_type, Object object) throws Exception {
         if (obj_type instanceof List)
-            WriteBasic(stream, endianness, size_t, Math.floorDiv(((List)object).size(), ((List)obj_type).size()));
+            WriteBasic(stream, endianness, size_t, Short.valueOf((short) Math.floorDiv(((List)object).size(), ((List)obj_type).size())));
         if (obj_type instanceof Iterable) {
             var obj_list = new ArrayList<Object>();
             ((Iterable) object).forEach(obj_list::add);

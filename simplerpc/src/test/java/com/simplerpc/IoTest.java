@@ -66,20 +66,15 @@ public class IoTest {
         testInvariance('<', 'h', Arrays.asList("c"), "\3\0a\0c".getBytes(), Arrays.asList((byte)'a', (byte)'\0', (byte)'c'));
     }
 
-    // @Test
-    // public void testListNibble() throws Exception {
-    //     testInvariance('<', 'h', Arrays.asList("h"), "\3\0\1\0\2\0\3\0".getBytes(), Arrays.asList(1, 2, 3));
-    // }
+    @Test
+    public void testListNibble() throws Exception {
+        testInvariance('<', 'h', Arrays.asList("h"), "\3\0\1\0\2\0\3\0".getBytes(), Arrays.asList((short)1, (short)2, (short)3));
+    }
 
-
-// def test_list_char() -> None:
-// _test_invariance(
-//     read, write, '<', 'h', ['c'], b'\3\0a\0c', [b'a', b'\0', b'c'])
-
-
-// def test_list_nibble() -> None:
-// _test_invariance(
-//     read, write, '<', 'h', ['h'], b'\3\0\1\0\2\0\3\0', [1, 2, 3])
+    @Test
+    public void testListList() throws Exception {
+        testInvariance('<', 'h', Arrays.asList(Arrays.asList("h")), "\2\0\2\0\0\1\2\0\2\3".getBytes(), Arrays.asList(Arrays.asList((short)0, (short)1), Arrays.asList((short)2, (short)3)));
+    }
 
 
 // def test_list_list() -> None:
