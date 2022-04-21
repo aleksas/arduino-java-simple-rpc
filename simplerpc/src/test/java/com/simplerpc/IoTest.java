@@ -73,7 +73,7 @@ public class IoTest {
 
     @Test
     public void testListList() throws Exception {
-        testInvariance('<', 'h', Arrays.asList(Arrays.asList("h")), "\2\0\2\0\0\1\2\0\2\3".getBytes(), Arrays.asList(Arrays.asList((short)0, (short)1), Arrays.asList((short)2, (short)3)));
+        testInvariance('<', 'h', Arrays.asList(Arrays.asList("b")), "\2\0\2\0\0\1\2\0\2\3".getBytes(), Arrays.asList(Arrays.asList((byte)0, (byte)1), Arrays.asList((byte)2, (byte)3)));
     }
 
 
