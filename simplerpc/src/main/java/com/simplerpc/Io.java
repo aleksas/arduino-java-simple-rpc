@@ -8,7 +8,10 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+
+import javax.lang.model.util.ElementScanner14;
 
 /**
  * Io class.
@@ -154,8 +157,9 @@ public class Io {
      * @throws Exception
      */
     public static void Write(OutputStream stream, char endianness, char size_t, Object obj_type, Object object) throws Exception {
-        if (obj_type instanceof List)
+        if (obj_type instanceof List) {
             WriteBasic(stream, endianness, size_t, Short.valueOf((short) Math.floorDiv(((List)object).size(), ((List)obj_type).size())));
+        }
         if (obj_type instanceof Iterable) {
             var obj_list = new ArrayList<Object>();
             ((Iterable) object).forEach(obj_list::add);
@@ -169,10 +173,21 @@ public class Io {
             for (int i = 0; i < obj_list.size(); i++) {
                 var item = obj_list.get(i);
                 var item_type = obj_type_list.get(i);
-                var item_arr = java.lang.reflect.Array.newInstance(item.getClass(), 1);
-
-                ((Object[]) item_arr)[0] = item;
-                Write(stream, endianness, size_t, item_type, item_arr);
+                Object items = null;
+                if (item_type instanceof List) {
+                    if (item instanceof List) 
+                        items = item;
+                    else if (item instanceof Object[]) {
+                        throw new RuntimeException(); // TODO
+                        // items = new ArrayList<Object>();   
+                        // Collections.addAll((List<Object>) items, ((Object[]) object));  
+                    } else
+                        throw new RuntimeException(); // TODO
+                } else {
+                    items = java.lang.reflect.Array.newInstance(item.getClass(), 1);
+                    ((Object[]) items)[0] = item;
+                }
+                Write(stream, endianness, size_t, item_type, items);
             }
         }
         else
