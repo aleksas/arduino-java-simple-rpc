@@ -47,8 +47,7 @@ dependencies {
     // https://github.com/FasterXML/jackson-dataformats-text
     implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.11.2'
     implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.11.2'
-    implementation group: 'com.cedarsoftware', name: 'java-util', version: '2.0.0'
-
+    testImplementation group: 'com.cedarsoftware', name: 'java-util', version: '2.0.0'
 }
 
 javadoc {
