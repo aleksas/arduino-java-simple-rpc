@@ -71,7 +71,7 @@ public class ByteBufferStruct {
 
             switch (c) {
                 case 'c':
-                    buffer.put(((Byte) object[pos]).byteValue());
+                    buffer.put((byte) ((Character) object[pos]).charValue());
                     break;
                 case 'b':
                     buffer.put((byte) object[pos]);
@@ -146,7 +146,7 @@ public class ByteBufferStruct {
 
             switch (c) {
                 case 'c':
-                    o = buffer.get();
+                    o = (char)buffer.get();
                     break;
                 case 'b':
                     o = buffer.get();

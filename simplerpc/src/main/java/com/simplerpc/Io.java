@@ -8,10 +8,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-
-import javax.lang.model.util.ElementScanner14;
 
 /**
  * Io class.
@@ -174,15 +171,10 @@ public class Io {
                 var item = obj_list.get(i);
                 var item_type = obj_type_list.get(i);
                 Object items = null;
-                if (item_type instanceof List) {
-                    if (item instanceof List) 
-                        items = item;
-                    else if (item instanceof Object[]) {
-                        throw new RuntimeException(); // TODO
-                        // items = new ArrayList<Object>();   
-                        // Collections.addAll((List<Object>) items, ((Object[]) object));  
-                    } else
-                        throw new RuntimeException(); // TODO
+                if (item_type instanceof Iterable) {
+                    items = item;
+                } else if (item_type == "s") {
+                    items = item;
                 } else {
                     items = java.lang.reflect.Array.newInstance(item.getClass(), 1);
                     ((Object[]) items)[0] = item;
