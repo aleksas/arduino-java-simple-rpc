@@ -178,7 +178,7 @@ public class Interface  implements AutoCloseable {
     /**
      * Execute a method.
      * @param methodName Method name.
-     * @param parameters Method parameters.
+     * @param arguments Method arguments.
      * @return Return value of the method.
      * @throws IOException
      */

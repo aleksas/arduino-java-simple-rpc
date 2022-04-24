@@ -91,7 +91,6 @@ public class Io {
      * @param basic_type Type of {value}.
      * @return Value of type {basic_type}.
      * @throws IOException
-     * @throws Exception
      */
     public static Object ReadBasic(InputStream stream, char endianness, char basic_type) throws IOException {
         if (basic_type == 's')
@@ -110,7 +109,6 @@ public class Io {
      * @param obj_type Type object.
      * @return Object of type {obj_type}.
      * @throws IOException
-     * @throws Exception
      */
     public static Object Read(InputStream stream, char endianness, char size_t, Object obj_type) throws IOException {
         if (obj_type == null) {
@@ -150,7 +148,6 @@ public class Io {
      * @param endianness Endianness.
      * @param size_t Type of size_t.
      * @param obj_type Type object.
-     * @return Object of type {obj_type}.
      * @throws Exception
      */
     public static void Write(OutputStream stream, char endianness, char size_t, Object obj_type, Object object) throws Exception {
