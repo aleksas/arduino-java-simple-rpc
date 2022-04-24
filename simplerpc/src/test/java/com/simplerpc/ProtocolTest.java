@@ -3,23 +3,31 @@
  */
 package com.simplerpc;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 public class ProtocolTest {
-    @Test public void testParseTypeNone() {
+    @Test
+    public void testParseTypeNone() {
         assertEquals(null, Protocol.ParseType(ByteBuffer.wrap("".getBytes())));
     }
     
-    @Test public void testParseTypeBasic() {
+    @Test
+    public void testParseTypeBasic() {
         assertEquals("i", Protocol.ParseType(ByteBuffer.wrap("i".getBytes())));
     }
     
-    @Test(expected = RuntimeException.class) public void parseTypeTuple() {
-        Protocol.ParseType(ByteBuffer.wrap("ic".getBytes()));
+    @Test
+    public void parseTypeTuple() {
+        Assertions.assertThrows(RuntimeException.class, () -> {
+            Protocol.ParseType(ByteBuffer.wrap("ic".getBytes()));
+        });
     }
 
     @Test public void testParseTypeListBasic() {
@@ -79,28 +87,28 @@ public class ProtocolTest {
     }
 
     @Test public void testParseTypeNameBasic() {
-        assertEquals("byte[]", Protocol.TypeName("c"));
-        assertEquals("int", Protocol.TypeName("i"));
+        assertEquals("Byte[]", Protocol.TypeName("c"));
+        assertEquals("Integer", Protocol.TypeName("i"));
         assertEquals("boolean", Protocol.TypeName("?"));
-        assertEquals("float", Protocol.TypeName("f"));
+        assertEquals("Float", Protocol.TypeName("f"));
     }
 
     @Test public void testParseTypeNameTupleBasic() {
-        assertEquals("[int, byte[]]", Protocol.TypeName(Arrays.asList("i", "c")));
-        assertEquals("[boolean, float]", Protocol.TypeName(Arrays.asList("?", "f")));
+        assertEquals("[Integer, Byte[]]", Protocol.TypeName(Arrays.asList("i", "c")));
+        assertEquals("[boolean, Float]", Protocol.TypeName(Arrays.asList("?", "f")));
     }
 
     @Test public void testParseTypeNameListBasic() {
-        assertEquals("[[int]]", Protocol.TypeName(Arrays.asList(Arrays.asList("i"))));
-        assertEquals("[boolean, float]", Protocol.TypeName(Arrays.asList("?", "f")));
+        assertEquals("[[Integer]]", Protocol.TypeName(Arrays.asList(Arrays.asList("i"))));
+        assertEquals("[boolean, Float]", Protocol.TypeName(Arrays.asList("?", "f")));
     }
 
     @Test public void testParseTypeNameObjectBasic() {
-        assertEquals("[(int)]", Protocol.TypeName(Arrays.asList(new Tuple("i"))));
+        assertEquals("[(Integer)]", Protocol.TypeName(Arrays.asList(new Tuple("i"))));
     }
 
     @Test public void testParseTypeNameComplex() {
-        assertEquals("[((byte[], byte[]), byte[]), int, ([byte[]])]", 
+        assertEquals("[((Byte[], Byte[]), Byte[]), Integer, ([Byte[]])]", 
             Protocol.TypeName(
                 Arrays.asList(
                     new Tuple(new Tuple("c", "c"), "c"),
@@ -114,8 +122,8 @@ public class ProtocolTest {
     @Test public void testParseSignatureBasic() {
         var method = new Method(1, "method1");
 
-        method.parameters.add(new Parameter("arg0", "c", "byte[]"));
-        method.parameters.add(new Parameter("arg1", "f", "float"));
+        method.parameters.add(new Parameter("arg0", "c", "Byte[]"));
+        method.parameters.add(new Parameter("arg1", "f", "Float"));
         
         assertEquals(method, Protocol.ParseSignature(1, ":c f"));
     }
@@ -123,10 +131,10 @@ public class ProtocolTest {
     @Test public void testParseSignatureComplex() {
         var method = new Method(2, "method2");
 
-        method.parameters.add(new Parameter("arg0", Arrays.asList("c"), "[byte[]]"));
-        method.parameters.add(new Parameter("arg1", new Tuple("c", "f"), "(byte[], float)"));
+        method.parameters.add(new Parameter("arg0", Arrays.asList("c"), "[Byte[]]"));
+        method.parameters.add(new Parameter("arg1", new Tuple("c", "f"), "(Byte[], Float)"));
         method.ret.fmt = new Tuple("f", "f");
-        method.ret.tyme_name = "(float, float)";
+        method.ret.tyme_name = "(Float, Float)";
         
         assertEquals(method, Protocol.ParseSignature(2, "(ff): [c] (cf)"));
     }
