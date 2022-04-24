@@ -1,9 +1,11 @@
-package com.simplerpc;
+package com.structpack;
 
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.ByteBuffer;
+
+import com.python.structpack.HalfPrecisionFloat;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

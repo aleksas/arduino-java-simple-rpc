@@ -1,4 +1,4 @@
-package com.simplerpc;
+package com.structpack;
 
 import static java.nio.ByteBuffer.wrap;
 
