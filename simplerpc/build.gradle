@@ -74,3 +74,14 @@ test {
     // Use JUnit5 test framework
     useJUnitPlatform()
 }
+
+// testing {
+//     suites {
+//         // Configure the built-in test suite
+//         test {
+//             // Use JUnit4 test framework
+//     // useJUnit('5.8.2')
+//             useJUnitPlatform()
+//         }
+//     }
+// }
