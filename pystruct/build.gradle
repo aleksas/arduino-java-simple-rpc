@@ -11,9 +11,10 @@ plugins {
     // Apply the java-library plugin for API and implementation separation.
     id 'java-library'
     id 'maven-publish'
+    id 'java' 
 }
 
-group 'com.structpack'
+group 'com.pystruct'
 version '1.0-SNAPSHOT'
 
 repositories {
@@ -43,7 +44,7 @@ dependencies {
 }
 
 javadoc {
-    include 'com/structpack/*'
+    include 'com/pystruct/*'
     options.addBooleanOption('html5', true)
 }
 

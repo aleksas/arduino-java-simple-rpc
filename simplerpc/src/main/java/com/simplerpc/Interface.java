@@ -13,7 +13,7 @@ import java.util.stream.IntStream;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
-import com.structpack.structpack.ByteBufferStruct;
+import com.pystruct.ByteBufferStruct;
 
 public class Interface  implements AutoCloseable {
     private static String PROTOCOL = "simpleRPC";

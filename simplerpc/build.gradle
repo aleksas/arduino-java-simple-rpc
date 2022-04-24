@@ -11,6 +11,7 @@ plugins {
     // Apply the java-library plugin for API and implementation separation.
     id 'java-library'
     id 'maven-publish'
+    id 'java' 
 }
 
 group 'com.simplerpc'
@@ -35,7 +36,7 @@ def urlFile = { url, name ->
 }
 
 dependencies {
-    implementation project(':structpack')
+    implementation project(':pystruct')
 
     // This dependency is exported to consumers, that is to say found on their compile classpath.
     api 'org.apache.commons:commons-math3:3.6.1'

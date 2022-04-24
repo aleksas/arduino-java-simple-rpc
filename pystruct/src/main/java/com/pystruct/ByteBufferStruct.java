@@ -1,4 +1,4 @@
-package com.structpack;
+package com.pystruct;
 
 import static java.nio.ByteBuffer.wrap;
 
