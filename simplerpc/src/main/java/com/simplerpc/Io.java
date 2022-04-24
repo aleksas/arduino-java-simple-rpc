@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.pystruct.ByteBufferStruct;
+
 /**
  * Io class.
  */

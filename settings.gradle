@@ -10,4 +10,5 @@
 
 rootProject.name = 'java-simple-rpc'
 rootProject
-include('simplerpc')
+include(':pystruct')
+include(':simplerpc')
