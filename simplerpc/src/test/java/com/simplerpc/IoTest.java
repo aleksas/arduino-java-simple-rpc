@@ -1,8 +1,8 @@
 package com.simplerpc;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
 import static com.cedarsoftware.util.Converter.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Set;
 
 import com.cedarsoftware.util.DeepEquals;
+
+import org.junit.jupiter.api.Test;
 
 public class IoTest {
     private void testInvarianceBasic(char endianness, char basic_type, byte[] data, Object value) throws Exception{

@@ -2,6 +2,9 @@ package com.simplerpc;
 
 import com.simplerpc.serial.Serial;
 
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
+
+@DisabledIfEnvironmentVariable(named="CI", matches="true")
 public class SerialTest extends DeviceTest<Interface> {
     @Override
     protected Interface createInstance() {

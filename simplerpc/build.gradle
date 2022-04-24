@@ -51,6 +51,10 @@ dependencies {
     // https://github.com/jdereg/java-util
     // This dependency is used to DeepEquals compare Tuple objects
     testImplementation group: 'com.cedarsoftware', name: 'java-util', version: '2.0.0'
+    
+    // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.8.2'
+
 }
 
 javadoc {
@@ -63,12 +67,19 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     from javadoc.destinationDir
 }
 
-testing {
-    suites {
-        // Configure the built-in test suite
-        test {
-            // Use JUnit4 test framework
-            useJUnit('4.13.2')
-        }
-    }
+test {
+    // Use JUnit4 test framework
+    //useJUnit('4.13.2')
+    useJUnitPlatform()
 }
+
+// testing {
+//     suites {
+//         // Configure the built-in test suite
+//         test {
+//             // Use JUnit4 test framework
+//     // useJUnit('5.8.2')
+//             useJUnitPlatform()
+//         }
+//     }
+// }

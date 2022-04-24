@@ -3,23 +3,31 @@
  */
 package com.simplerpc;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 public class ProtocolTest {
-    @Test public void testParseTypeNone() {
+    @Test
+    public void testParseTypeNone() {
         assertEquals(null, Protocol.ParseType(ByteBuffer.wrap("".getBytes())));
     }
     
-    @Test public void testParseTypeBasic() {
+    @Test
+    public void testParseTypeBasic() {
         assertEquals("i", Protocol.ParseType(ByteBuffer.wrap("i".getBytes())));
     }
     
-    @Test(expected = RuntimeException.class) public void parseTypeTuple() {
-        Protocol.ParseType(ByteBuffer.wrap("ic".getBytes()));
+    @Test
+    public void parseTypeTuple() {
+        Assertions.assertThrows(RuntimeException.class, () -> {
+            Protocol.ParseType(ByteBuffer.wrap("ic".getBytes()));
+        });
     }
 
     @Test public void testParseTypeListBasic() {
