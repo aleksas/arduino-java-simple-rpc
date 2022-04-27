@@ -14,7 +14,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 
-import io.github.aleksas.simplerpc.Interface;
+import io.github.aleksas.simplerpc.serial.Serial;
 
 @Disabled
 @TestInstance(Lifecycle.PER_CLASS)
@@ -109,6 +109,22 @@ public abstract class DeviceTest<T extends Interface> {
     public void test13PostClose() {
         assertFalse(iface.isOpen());
         assertTrue(iface.device.methods.size() == 0);
+    }
+
+    @Test
+    public void test14Open() throws Exception {
+        assertFalse(iface.isOpen());
+
+        try (var transport = new Serial(Config.DEVICES.get("serial"), true, 9600)) {
+            try (var interf = new Interface(transport, 0, false, null)) {
+                assertFalse(interf.isOpen());
+                interf.open();
+                assertTrue(interf.isOpen());
+                assertEquals(interf.device.version, Interface.VERSION);
+                assertEquals(interf.call_method("ping", 3), 3);
+                assertEquals(interf.device.methods.get("ping").ret.tyme_name, "Integer");
+            }
+        }
     }
 
     @Test

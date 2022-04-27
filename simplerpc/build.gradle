@@ -11,10 +11,11 @@ plugins {
     // Apply the java-library plugin for API and implementation separation.
     id 'java-library'
     id 'maven-publish'
-    id 'java' 
+    id 'signing'
 }
 
-group 'com.simplerpc'
+group 'io.github.aleksas'
+archivesBaseName="simplerpc"
 version '1.0-SNAPSHOT'
 
 repositories {
@@ -66,6 +67,32 @@ javadoc {
 task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
     from javadoc.destinationDir
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+// signing {
+//     sign configurations.archives
+// }
+
+publishing {
+  repositories {
+    maven {
+      name = "OSSRH"
+      url = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+      credentials {
+        username = System.getenv("MAVEN_USERNAME")
+        password = System.getenv("MAVEN_PASSWORD")
+      }
+    }
+  }
 }
 
 test {

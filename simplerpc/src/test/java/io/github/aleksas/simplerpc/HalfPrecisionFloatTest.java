@@ -8,8 +8,6 @@ import java.nio.ByteBuffer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import io.github.aleksas.simplerpc.HalfPrecisionFloat;
-
 public class HalfPrecisionFloatTest {
 
   private byte[] simulateBytes(final float fullPrecision) {

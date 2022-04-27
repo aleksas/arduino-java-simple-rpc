@@ -2,7 +2,6 @@ package io.github.aleksas.simplerpc;
 
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
-import io.github.aleksas.simplerpc.Interface;
 import io.github.aleksas.simplerpc.serial.Serial;
 
 @DisabledIfEnvironmentVariable(named="CI", matches="true")

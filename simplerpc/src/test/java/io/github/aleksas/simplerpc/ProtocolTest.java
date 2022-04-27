@@ -12,11 +12,6 @@ import java.util.Arrays;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import io.github.aleksas.simplerpc.Method;
-import io.github.aleksas.simplerpc.Parameter;
-import io.github.aleksas.simplerpc.Protocol;
-import io.github.aleksas.simplerpc.Tuple;
-
 public class ProtocolTest {
     @Test
     public void testParseTypeNone() {

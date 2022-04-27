@@ -28,4 +28,10 @@ jobs:
         with:
           name: Package
           path: simplerpc/build/libs
-          
+      - name: Publish package
+        uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
+        with:
+          arguments: publish
+        env:
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
