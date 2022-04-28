@@ -1,4 +1,4 @@
-package io.github.aleksas.simplerpc;
+package io.github.aleksas.arduino.simplerpc;
 
 import java.io.IOException;
 import java.io.InputStream;

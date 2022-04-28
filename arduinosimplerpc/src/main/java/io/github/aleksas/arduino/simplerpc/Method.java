@@ -1,4 +1,4 @@
-package io.github.aleksas.simplerpc;
+package io.github.aleksas.arduino.simplerpc;
 
 import java.util.ArrayList;
 import java.util.List;

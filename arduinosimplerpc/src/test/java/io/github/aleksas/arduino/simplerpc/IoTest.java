@@ -1,4 +1,4 @@
-package io.github.aleksas.simplerpc;
+package io.github.aleksas.arduino.simplerpc;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;

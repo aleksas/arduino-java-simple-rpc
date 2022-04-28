@@ -1,11 +1,11 @@
-package io.github.aleksas.simplerpc.serial;
+package io.github.aleksas.arduino.simplerpc.serial;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 
 import com.fazecast.jSerialComm.SerialPort;
 
-import io.github.aleksas.simplerpc.Transport;
+import io.github.aleksas.arduino.simplerpc.Transport;
 
 public class Serial implements Transport, AutoCloseable {
     public SerialPort serial = null;
