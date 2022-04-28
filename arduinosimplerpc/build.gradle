@@ -15,7 +15,7 @@ plugins {
 }
 
 group 'io.github.aleksas'
-archivesBaseName="simplerpc"
+archivesBaseName="arduino-simple-rpc"
 version '1.0-SNAPSHOT'
 
 repositories {
