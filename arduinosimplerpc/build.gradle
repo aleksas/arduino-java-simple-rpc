@@ -60,7 +60,7 @@ dependencies {
 }
 
 javadoc {
-    include 'com/simplerpc/*'
+    include 'io/github/aleksas/*'
     options.addBooleanOption('html5', true)
 }
 
