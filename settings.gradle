@@ -10,4 +10,4 @@
 
 rootProject.name = 'arduino-simple-rpc'
 rootProject
-include(':arduinosimplerpc')
+include(':arduino-simple-rpc')
