@@ -5,7 +5,11 @@
 
 name: Java CI
 
-on: [push]
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
 jobs:
   build:
@@ -27,5 +31,15 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: Package
-          path: simplerpc/build/libs
-          
+          path: arduino-simple-rpc/build/libs
+      #After decoding the secret key, place the file in ~ /. Gradle/ secring.gpg
+      - name: Decode
+        run: |
+          echo "${{secrets.SIGNING_SECRET_KEY_RING_FILE}}" > ${RUNNER_TEMP}/secring.gpg.b64
+          base64 -d ${RUNNER_TEMP}/secring.gpg.b64 > ${RUNNER_TEMP}/secring.kbx
+      #Publish project
+      - name: Publish
+        run: ./gradlew publish -Psigning.keyId=${{secrets.SIGNING_KEY_ID}} -Psigning.password="${{secrets.SIGNING_PASSWORD}}" -Psigning.secretKeyRingFile="${RUNNER_TEMP}/secring.kbx"
+        env:
+          MAVEN_USERNAME: ${{secrets.OSSRH_USERNAME}}
+          MAVEN_PASSWORD: ${{secrets.OSSRH_TOKEN}}

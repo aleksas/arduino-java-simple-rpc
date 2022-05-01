@@ -8,6 +8,6 @@
  * This project uses @Incubating APIs which are subject to change.
  */
 
-rootProject.name = 'java-simple-rpc'
+rootProject.name = 'arduino-simple-rpc'
 rootProject
-include(':simplerpc')
+include(':arduino-simple-rpc')
