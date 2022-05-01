@@ -5,7 +5,12 @@
 
 name: Java CI
 
-on: [push]
+on:
+  push:
+    
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build:
@@ -27,5 +32,15 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: Package
-          path: simplerpc/build/libs
-          
+          path: arduinosimplerpc/build/libs
+      - name: Decode
+        run: |
+          echo "${{secrets.SIGNING_SECRET_KEY_RING_FILE}}" > ~/.gradle/secring.gpg.b64
+          base64 -d ~/.gradle/secring.gpg.b64 > ~/.gradle/secring.gpg
+      - name: Publish package
+        uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
+        with:
+          arguments: publish
+        env:
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
