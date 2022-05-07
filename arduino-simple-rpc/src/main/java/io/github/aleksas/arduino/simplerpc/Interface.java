@@ -10,8 +10,8 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+//import com.fasterxml.jackson.databind.ObjectMapper;
+// import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import io.github.aleksas.pystruct.ByteBufferStruct;
 
@@ -94,8 +94,8 @@ public class Interface  implements AutoCloseable {
     } 
 
     private void load(InputStream handle) {
-        var mapper = new ObjectMapper(new YAMLFactory());
-        mapper.findAndRegisterModules();
+        // var mapper = new ObjectMapper(new YAMLFactory());
+        // mapper.findAndRegisterModules();
         // Interface iterface = mapper.readValue(handle, Interface.class);
         // TODO: implement yaml loader
         throw new RuntimeException("Not implementd");

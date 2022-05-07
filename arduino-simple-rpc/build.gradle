@@ -15,7 +15,7 @@ plugins {
 }
 
 group 'io.github.aleksas'
-version '0.1.0'
+version '1.0'
 
 repositories {
     // Use Maven Central for resolving dependencies.
@@ -58,12 +58,17 @@ dependencies {
 
 }
 
+task apiJavadocs(type: Javadoc) {
+  source = sourceSets.main.allJava
+  classpath = sourceSets.main.runtimeClasspath
+}
+
 javadoc {
-    include 'io/github/aleksas/*'
+    include 'build/docs/javadoc/*'
     options.addBooleanOption('html5', true)
 }
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
+task javadocJar(type: Jar, dependsOn: [apiJavadocs, javadoc]) {
     classifier = 'javadoc'
     from javadoc.destinationDir
 }
@@ -103,7 +108,7 @@ publishing {
   repositories {
     maven {
       name = "OSSRH"
-      url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+      url = "https://s01.oss.sonatype.org/content/repositories/releases"
       credentials {
         username findProperty("ossrhUsername") ?: System.getenv("MAVEN_USERNAME")
         password findProperty("ossrhPassword") ?: System.getenv("MAVEN_PASSWORD")
@@ -112,7 +117,7 @@ publishing {
       if (!isReleasedVersion) {
         url "https://s01.oss.sonatype.org/content/repositories/snapshots"
       } else {
-        url "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2"
+        url "https://s01.oss.sonatype.org/content/repositories/releases"
       }
     }
   }
