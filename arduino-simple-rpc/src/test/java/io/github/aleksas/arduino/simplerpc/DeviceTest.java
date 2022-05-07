@@ -21,6 +21,7 @@ import io.github.aleksas.arduino.simplerpc.serial.Serial;
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public abstract class DeviceTest<T extends Interface> {
     protected abstract T createInstance();
+    protected abstract String getDevice();
     private static Interface iface = null;
 
     @BeforeAll
@@ -115,7 +116,7 @@ public abstract class DeviceTest<T extends Interface> {
     public void test14Open() throws Exception {
         assertFalse(iface.isOpen());
 
-        try (var transport = new Serial(Config.DEVICES.get("serial"), true, 9600)) {
+        try (var transport = new Serial(getDevice(), true, 9600)) {
             try (var interf = new Interface(transport, 0, false, null)) {
                 assertFalse(interf.isOpen());
                 interf.open();

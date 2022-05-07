@@ -33,7 +33,6 @@ public class ByteBufferStruct {
         Map.entry('L', 4), // unsigned long
         Map.entry('q', 8), // long long
         Map.entry('Q', 8), // unsigned long long
-        Map.entry('e', 2), // half precision
         Map.entry('f', 4), // float
         Map.entry('d', 8)  // double
     );  
@@ -101,9 +100,6 @@ public class ByteBufferStruct {
                     break;
                 case 'Q':
                     buffer.putLong(((BigInteger) object[pos]).longValue() & 0xffffffffffffffffL);
-                    break;
-                case 'e':
-                    buffer.putShort(((HalfPrecisionFloat) object[pos]).getHalfPrecisionAsShort());
                     break;
                 case 'f':
                     buffer.putFloat((float) object[pos]);
@@ -176,9 +172,6 @@ public class ByteBufferStruct {
                     break;
                 case 'Q':
                     o = toUnsignedBigInteger(buffer.getLong());
-                    break;
-                case 'e':
-                    o = new HalfPrecisionFloat(buffer.getShort());
                     break;
                 case 'f':
                     o = buffer.getFloat();
