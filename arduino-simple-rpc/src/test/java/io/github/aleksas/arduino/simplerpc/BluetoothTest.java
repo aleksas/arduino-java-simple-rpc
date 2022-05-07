@@ -5,8 +5,7 @@ import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 import io.github.aleksas.arduino.simplerpc.serial.Serial;
 
 @DisabledIfEnvironmentVariable(named="CI", matches="true")
-public class SerialTest extends DeviceTest<Interface> {
-    
+public class BluetoothTest extends DeviceTest<Interface> {
     @Override
     protected Interface createInstance() {
         try {
@@ -16,10 +15,10 @@ public class SerialTest extends DeviceTest<Interface> {
             e.printStackTrace();
         }
         return null;
-    }
+    }    
 
     @Override
     protected String getDevice() {
-        return Config.DEVICES.get("serial");
+        return Config.DEVICES.get("bt");
     }    
 }
