@@ -58,12 +58,17 @@ dependencies {
 
 }
 
+task apiJavadocs(type: Javadoc) {
+  source = sourceSets.main.allJava
+  classpath = sourceSets.main.runtimeClasspath
+}
+
 javadoc {
-    include 'io/github/aleksas/*'
+    include 'build/docs/javadoc/*'
     options.addBooleanOption('html5', true)
 }
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
+task javadocJar(type: Jar, dependsOn: [apiJavadocs, javadoc]) {
     classifier = 'javadoc'
     from javadoc.destinationDir
 }
