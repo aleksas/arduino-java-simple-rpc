@@ -15,7 +15,7 @@ plugins {
 }
 
 group 'io.github.aleksas'
-version '1.0'
+version '1.0.5'
 
 repositories {
     // Use Maven Central for resolving dependencies.
@@ -88,22 +88,25 @@ ext {
 
 
 publishing {
-    publications {
+  publications {
     mavenJava(MavenPublication) {
       from components.java
       artifact sourcesJar
       artifact javadocJar
 
       pom {
-        description = "Arduino Simple RPC"
+        name = "Arduino Simple RPC"
+        description = "Arduino simpleRPC API client library"
+
         scm {
           connection = "scm:git:git@github.com:aleksas/arduino-java-simple-rpc.git"
           developerConnection = "scm:git:ssh://github.com/aleksas/arduino-java-simple-rpc.git"
-          url = "https://github.com/aleksas/arduino-java-simple-rpc"
+          url = "https://www.arduino.cc/reference/en/libraries/simplerpc/"
         }
       }
     }
   }
+  
   
   repositories {
     maven {
