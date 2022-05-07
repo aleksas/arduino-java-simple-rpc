@@ -4,6 +4,8 @@
 # Ignore Gradle build output directory
 build
 lib/bin
+.idea
 
 *.class
 gradle.properties
+local.properties
