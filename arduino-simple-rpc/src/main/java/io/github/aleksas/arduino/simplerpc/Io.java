@@ -116,13 +116,13 @@ public class Io {
         if (obj_type == null) {
             return null;
         } else if (obj_type instanceof Tuple) {
-            var tuple = (Tuple) obj_type;
-            var tmp = new ArrayList<Object>();
-            for (var object: tuple.toList())
+            Tuple tuple = (Tuple) obj_type;
+            List<Object> tmp = new ArrayList<Object>();
+            for (Object object: tuple.toList())
                 tmp.add(Read(stream, endianness, size_t, object));
             return new Tuple(tmp.toArray());
         } else if (obj_type instanceof List){
-            var leno = ReadBasic(stream, endianness, size_t);
+            Object leno = ReadBasic(stream, endianness, size_t);
             Integer length = null;
             if (leno instanceof Integer) {
                 length = (Integer) leno;
@@ -132,7 +132,7 @@ public class Io {
                 throw new RuntimeException("Not implemented");
             
             var tmp = new ArrayList<Object>();
-            for (var object: (List) obj_type)
+            for (Object object: (List) obj_type)
                 for (int i = 0; i < length; i++)
                     tmp.add(Read(stream, endianness, size_t, object));
             return tmp;

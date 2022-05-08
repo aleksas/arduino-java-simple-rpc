@@ -20,13 +20,13 @@ class Protocol {
         if (obj_type == null) {
             return "";
         } else if (obj_type instanceof Tuple) {
-            var tuple = (Tuple) obj_type;
-            for (var object: tuple.toList())
+            Tuple tuple = (Tuple) obj_type;
+            for (Object object: tuple.toList())
                 types.add(TypeName(object));
             return "(" + String.join(", ", types) + ")";            
         } else if (obj_type instanceof List){
             var list = (List) obj_type;
-            for (var object: list)
+            for (Object object: list)
                 types.add(TypeName(object));
             return "[" + String.join(", ", types) + "]";       
         }
@@ -48,7 +48,7 @@ class Protocol {
             } else if (token == (byte)'(') {
                 var subtype = ConstructType(tokens);
                 if (subtype instanceof ArrayList) {
-                    var tuple = new Tuple(((ArrayList) subtype).toArray());
+                    Tuple tuple = new Tuple(((ArrayList) subtype).toArray());
                     object_type.add(tuple);
                 } else {
                     return new Tuple(subtype);
@@ -73,7 +73,7 @@ class Protocol {
 
         int size = 0;
         if (obj_type instanceof Tuple) {
-            var tuple = (Tuple) obj_type;
+            Tuple tuple = (Tuple) obj_type;
             size = tuple.getSize();
             if (size == 1) {
                 return tuple.getValue(0);
@@ -124,7 +124,7 @@ class Protocol {
      * @return Method object.
      */
     public static Method ParseSignature(int index, ByteBuffer signature) {
-        var method = new Method(index, String.format("method%d", index)) ;
+        Method method = new Method(index, String.format("method%d", index)) ;
 
         var parameters = signature.slice();
         while(parameters.get() != (byte) ':') {}
@@ -211,7 +211,7 @@ class Protocol {
         var signature = splits.next();
         var description = splits.next();
 
-        var method = ParseSignature(index, signature);
+        Method method = ParseSignature(index, signature);
         AddDoc(method, description);
 
         return method;

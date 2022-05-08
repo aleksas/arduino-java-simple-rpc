@@ -116,8 +116,8 @@ public abstract class DeviceTest<T extends Interface> {
     public void test14Open() throws Exception {
         assertFalse(iface.isOpen());
 
-        try (var transport = new Serial(getDevice(), true, 9600)) {
-            try (var interf = new Interface(transport, 0, false, null)) {
+        try (Serial transport = new Serial(getDevice(), true, 9600)) {
+            try (Interface interf = new Interface(transport, 0, false, null)) {
                 assertFalse(interf.isOpen());
                 interf.open();
                 assertTrue(interf.isOpen());

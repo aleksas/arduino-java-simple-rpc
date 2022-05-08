@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -31,22 +32,22 @@ public class ProtocolTest {
     }
 
     @Test public void testParseTypeListBasic() {
-        var list = Arrays.asList("i");
+        List<String> list = Arrays.asList("i");
         assertEquals(list, Protocol.ParseType(ByteBuffer.wrap("[i]".getBytes())));
     }
 
     @Test public void testParseTypeObjectBasic() {
-        var tuple = new Tuple("i");
+        Tuple tuple = new Tuple("i");
         assertEquals(tuple, Protocol.ParseType(ByteBuffer.wrap("(i)".getBytes())));
     }
 
     @Test public void testParseTypeListTuple() {
-        var list = Arrays.asList("i", "c");
+        List<String> list = Arrays.asList("i", "c");
         assertEquals(list, Protocol.ParseType(ByteBuffer.wrap("[ic]".getBytes())));
     }
 
     @Test public void testParseTypeListObject() {
-        var tuple = new Tuple("i", "c");
+        Tuple tuple = new Tuple("i", "c");
         var list = Arrays.asList(tuple);
         assertEquals(list, Protocol.ParseType(ByteBuffer.wrap("[(ic)]".getBytes())));
     }
@@ -62,23 +63,23 @@ public class ProtocolTest {
     }
 
     @Test public void testParseTypeObjectList() {
-        var tuple = new Tuple(Arrays.asList("i"));
+        Tuple tuple = new Tuple(Arrays.asList("i"));
         assertEquals(tuple, Protocol.ParseType(ByteBuffer.wrap("([i])".getBytes())));
     }
 
     @Test public void testParseTypeObjectObject() {
-        var tuple0 = new Tuple("i", "c");
-        var tuple1 = new Tuple(tuple0);
+        Tuple tuple0 = new Tuple("i", "c");
+        Tuple tuple1 = new Tuple(tuple0);
         assertEquals(tuple1, Protocol.ParseType(ByteBuffer.wrap("((ic))".getBytes())));
     }
 
     @Test public void testParseTypeComplex() {
-        var tuple0 = new Tuple(new String("c"), new String("c"));
-        var tuple1 = new Tuple(tuple0, new String("c"));
+        Tuple tuple0 = new Tuple(new String("c"), new String("c"));
+        Tuple tuple1 = new Tuple(tuple0, new String("c"));
 
-        var tuple2 = new Tuple(Arrays.asList(new String("c")));
+        Tuple tuple2 = new Tuple(Arrays.asList(new String("c")));
 
-        var tuple3 = new Tuple(tuple1, new String("i"), tuple2);
+        Tuple tuple3 = new Tuple(tuple1, new String("i"), tuple2);
         assertEquals(tuple3, Protocol.ParseType(ByteBuffer.wrap("(((cc)c)i([c]))".getBytes())));
     }
 
@@ -120,7 +121,7 @@ public class ProtocolTest {
     }
 
     @Test public void testParseSignatureBasic() {
-        var method = new Method(1, "method1");
+        Method method = new Method(1, "method1");
 
         method.parameters.add(new Parameter("arg0", "c", "Byte[]"));
         method.parameters.add(new Parameter("arg1", "f", "Float"));
@@ -129,7 +130,7 @@ public class ProtocolTest {
     }
     
     @Test public void testParseSignatureComplex() {
-        var method = new Method(2, "method2");
+        Method method = new Method(2, "method2");
 
         method.parameters.add(new Parameter("arg0", Arrays.asList("c"), "[Byte[]]"));
         method.parameters.add(new Parameter("arg1", new Tuple("c", "f"), "(Byte[], Float)"));
@@ -145,7 +146,7 @@ public class ProtocolTest {
     }
 
     @Test public void testParseAddDocBasic() {
-        var method = Protocol.ParseSignature(1, "i: c f");
+        Method method = Protocol.ParseSignature(1, "i: c f");
         Protocol.AddDoc(method, ByteBuffer.wrap("name: Test. @p1: Char. @p2: Float. @return: Int.".getBytes()));
 
         assertEquals("name", method.name);
@@ -158,7 +159,7 @@ public class ProtocolTest {
     }
 
     @Test public void addDocMissingName() {
-        var method = Protocol.ParseSignature(1, ": c f");
+        Method method = Protocol.ParseSignature(1, ": c f");
         Protocol.AddDoc(method, ByteBuffer.wrap("@p1: Char. @p2: Float.".getBytes()));
 
         assertEquals("method1", method.name);
@@ -167,7 +168,7 @@ public class ProtocolTest {
     }
 
     @Test public void addDocMissingParameter() {
-        var method = Protocol.ParseSignature(1, ": c f");
+        Method method = Protocol.ParseSignature(1, ": c f");
         Protocol.AddDoc(method, ByteBuffer.wrap("name: Test. @p1: Char".getBytes()));
 
         assertEquals("name", method.name);
@@ -176,7 +177,7 @@ public class ProtocolTest {
     }
 
     @Test public void testParseLine() {
-        var method = Protocol.ParseLine(1, ByteBuffer.wrap("i: c f;name: Test. @p1: Char. @p2: Float. @return: Int.".getBytes()));
+        Method method = Protocol.ParseLine(1, ByteBuffer.wrap("i: c f;name: Test. @p1: Char. @p2: Float. @return: Int.".getBytes()));
 
         assertEquals(1, method.index);
         assertEquals("name", method.name);
