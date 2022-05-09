@@ -11,28 +11,28 @@ public class Config {
         entry("bt", "/dev/rfcomm0")
     );
 
-    public static final String INTERFACE = """
-        endianness: <
-        methods:
-          ping:
-            doc: Echo a value.
-            index: 0
-            name: ping
-            parameters:
-            - doc: Value.
-              fmt: B
-              name: data
-              typename: int
-            return:
-              doc: Value of data.
-              fmt: B
-              typename: int
-        protocol: simpleRPC
-        size_t: H
-        version: !!python/tuple
-        - 3
-        - 0
-        - 0
-        """;       
+    // public static final String INTERFACE = """
+    //     endianness: <
+    //     methods:
+    //       ping:
+    //         doc: Echo a value.
+    //         index: 0
+    //         name: ping
+    //         parameters:
+    //         - doc: Value.
+    //           fmt: B
+    //           name: data
+    //           typename: int
+    //         return:
+    //           doc: Value of data.
+    //           fmt: B
+    //           typename: int
+    //     protocol: simpleRPC
+    //     size_t: H
+    //     version: !!python/tuple
+    //     - 3
+    //     - 0
+    //     - 0
+    //     """;       
     
 }

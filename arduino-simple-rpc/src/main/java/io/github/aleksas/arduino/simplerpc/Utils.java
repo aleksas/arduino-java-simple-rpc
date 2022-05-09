@@ -23,7 +23,7 @@ public class Utils {
                 return new Iterator<ByteBuffer>() {    
                     @Override
                     public boolean hasNext() {
-                        var tmp = slice.slice();
+                        ByteBuffer tmp = slice.slice();
                         while(tmp.hasRemaining()) {
                             if (tmp.get() != separator) {
                                 return true;
@@ -36,11 +36,15 @@ public class Utils {
                     public ByteBuffer next() {
                         boolean collecting = false;
                         while(slice.hasRemaining()) {
-                            var value = slice.get();
+                            byte value = slice.get();
                 
                             if (collecting) {
                                 if (value == separator) {
-                                    var ret = slice.slice(start_index, slice.position() - start_index - 1);
+                                    int tmpPosition = slice.position();
+                                    slice.position(start_index);
+                                    ByteBuffer ret = slice.slice();
+                                    ret.limit(tmpPosition - start_index - 1);
+                                    slice = slice.position(tmpPosition);
                                     return ret;
                                 }
                             } else {
@@ -56,7 +60,11 @@ public class Utils {
                         }
 
                         if (collecting) {
-                            return slice.slice(start_index, slice.limit() - start_index);
+                            int tmpPosition = slice.position();
+                            slice.position(start_index);
+                            ByteBuffer ret = slice.slice();
+                            slice.position(tmpPosition);
+                            return ret;
                         } else {
                             throw new RuntimeException();
                         }

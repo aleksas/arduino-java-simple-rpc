@@ -16,7 +16,7 @@ public class Return {
         if (obj == this)  
             return true;  
         if (obj instanceof Return) {
-            var ret = (Return) obj;
+            Return ret = (Return) obj;
             return (doc == ret.doc || doc.equals(ret.doc)) &&
                 (fmt == ret.fmt || fmt.equals(ret.fmt)) &&
                 (tyme_name == ret.tyme_name || tyme_name.equals(ret.tyme_name));

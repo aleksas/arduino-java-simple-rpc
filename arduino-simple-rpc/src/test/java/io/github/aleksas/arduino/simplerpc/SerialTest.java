@@ -10,7 +10,7 @@ public class SerialTest extends DeviceTest<Interface> {
     @Override
     protected Interface createInstance() {
         try {
-            var transport = new Serial(getDevice(), true, 9600);
+            Serial transport = new Serial(getDevice(), true, 9600);
             return new Interface(transport, 0, false, null);
         } catch (Exception e) {
             e.printStackTrace();

@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -16,17 +17,17 @@ class Protocol {
      * @return Java type name.
      */
     public static String TypeName(Object obj_type) {
-        var types = new ArrayList<String>();
+        List<String> types = new ArrayList<String>();
         if (obj_type == null) {
             return "";
         } else if (obj_type instanceof Tuple) {
-            var tuple = (Tuple) obj_type;
-            for (var object: tuple.toList())
+            Tuple tuple = (Tuple) obj_type;
+            for (Object object: tuple.toList())
                 types.add(TypeName(object));
             return "(" + String.join(", ", types) + ")";            
         } else if (obj_type instanceof List){
-            var list = (List) obj_type;
-            for (var object: list)
+            List<Object> list = (List) obj_type;
+            for (Object object: list)
                 types.add(TypeName(object));
             return "[" + String.join(", ", types) + "]";       
         }
@@ -38,17 +39,17 @@ class Protocol {
     }
 
     public static Object ConstructType(ByteBuffer tokens) {
-        var object_type = new ArrayList<Object>();
+        List<Object> object_type = new ArrayList<Object>();
 
         while(tokens.hasRemaining()) {
-            var token = tokens.get();
+            byte token = tokens.get();
 
             if (token == (byte)'[') {
                 object_type.add(ConstructType(tokens));
             } else if (token == (byte)'(') {
-                var subtype = ConstructType(tokens);
+                Object subtype = ConstructType(tokens);
                 if (subtype instanceof ArrayList) {
-                    var tuple = new Tuple(((ArrayList) subtype).toArray());
+                    Tuple tuple = new Tuple(((ArrayList) subtype).toArray());
                     object_type.add(tuple);
                 } else {
                     return new Tuple(subtype);
@@ -69,17 +70,17 @@ class Protocol {
      * @return Type object.
      */
     public static Object ParseType(ByteBuffer bytes) {
-        var obj_type = ConstructType(bytes);
+        Object obj_type = ConstructType(bytes);
 
         int size = 0;
         if (obj_type instanceof Tuple) {
-            var tuple = (Tuple) obj_type;
+            Tuple tuple = (Tuple) obj_type;
             size = tuple.getSize();
             if (size == 1) {
                 return tuple.getValue(0);
             }
         } else if (obj_type instanceof List) {
-            var list = (List) obj_type;
+            List<Object> list = (List) obj_type;
             size = list.size();
             if (size == 1) {
                 return list.get(0);
@@ -124,20 +125,22 @@ class Protocol {
      * @return Method object.
      */
     public static Method ParseSignature(int index, ByteBuffer signature) {
-        var method = new Method(index, String.format("method%d", index)) ;
+        Method method = new Method(index, String.format("method%d", index)) ;
 
-        var parameters = signature.slice();
+        ByteBuffer parameters = signature.slice();
         while(parameters.get() != (byte) ':') {}
 
-        var fmt = signature.slice(0, parameters.position() - 1);
-        var parsed_type = ParseType(fmt);
+        ByteBuffer fmt = signature.slice();
+        fmt = fmt.limit(parameters.position() - 1);
+
+        Object parsed_type = ParseType(fmt);
 
         method.ret.fmt = parsed_type;
         method.ret.tyme_name = TypeName(parsed_type);
         
         int param_index = 0;
-        for (var parameter_fmt : Utils.Split(parameters, (byte) ' ')) {
-            var parameter_type = ParseType(parameter_fmt);
+        for (ByteBuffer parameter_fmt : Utils.Split(parameters, (byte) ' ')) {
+            Object parameter_type = ParseType(parameter_fmt);
 
             method.parameters.add(
                 new Parameter(
@@ -162,14 +165,14 @@ class Protocol {
      * @param doc Method documentation.
      */
     static void AddDoc(Method method , ByteBuffer doc) {
-        var bytes = new byte[doc.remaining()];
+        byte[] bytes = new byte[doc.remaining()];
         doc.get(bytes);
 
-        var splits = new String(bytes, StandardCharsets.UTF_8).split("@");
-        var parts = new ArrayList<String[]>();
+        String[] splits = new String(bytes, StandardCharsets.UTF_8).split("@");
+        List<String[]> parts = new ArrayList<String[]>();
         
-        for (var split : splits) {
-            var tmp = SplitTrim(split, ":");
+        for (String split : splits) {
+            String[] tmp = SplitTrim(split, ":");
             parts.add(tmp);
             if (tmp.length != 2) {
                 return;
@@ -178,9 +181,9 @@ class Protocol {
 
         int index = 0;
         boolean first = true;
-        for (var part : parts) {
-            var name = part[0];
-            var description = part[1];
+        for (String[] part : parts) {
+            String name = part[0];
+            String description = part[1];
 
             if(first) {
                 method.name = name;
@@ -207,11 +210,11 @@ class Protocol {
      * @return Method object.
      */
     public static Method ParseLine(int index, ByteBuffer buffer) {
-        var splits = Utils.Split(buffer, (byte) ';').iterator();
-        var signature = splits.next();
-        var description = splits.next();
+        Iterator<ByteBuffer> splits = Utils.Split(buffer, (byte) ';').iterator();
+        ByteBuffer signature = splits.next();
+        ByteBuffer description = splits.next();
 
-        var method = ParseSignature(index, signature);
+        Method method = ParseSignature(index, signature);
         AddDoc(method, description);
 
         return method;

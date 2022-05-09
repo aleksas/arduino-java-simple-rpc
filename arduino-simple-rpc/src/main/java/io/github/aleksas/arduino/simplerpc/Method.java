@@ -34,7 +34,7 @@ public class Method {
         if (obj == this)  
             return true;  
         if (obj instanceof Method) {
-            var method = (Method) obj;
+            Method method = (Method) obj;
 
             return (doc == method.doc || doc.equals(method.doc)) && 
                 index == method.index && 

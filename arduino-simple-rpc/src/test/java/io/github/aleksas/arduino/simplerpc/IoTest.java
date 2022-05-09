@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 public class IoTest {
     private void testInvarianceBasic(char endianness, char basic_type, byte[] data, Object value) throws Exception{
         try (ByteArrayInputStream stream = new ByteArrayInputStream(data)) {
-            var val = Io.ReadBasic(stream, endianness, basic_type);
+            Object val = Io.ReadBasic(stream, endianness, basic_type);
 
             if (val instanceof byte[] && value instanceof byte[]) {
                 assertArrayEquals((byte[])val, (byte[])value);
@@ -33,7 +33,7 @@ public class IoTest {
 
     private void testInvariance(char endianness, char size_t, Object object_def, byte[] data, Object object) throws Exception{
         try (ByteArrayInputStream stream = new ByteArrayInputStream(data)) {
-            var obj = Io.Read(stream, endianness, size_t, object_def);
+            Object obj = Io.Read(stream, endianness, size_t, object_def);
 
             DeepEquals.deepEquals(obj, object, Map.of(DeepEquals.IGNORE_CUSTOM_EQUALS, Set.of(Tuple.class)));
         }
@@ -47,7 +47,7 @@ public class IoTest {
     @Test
     public void testReadBytesUntil() throws Exception {
         try (ByteArrayInputStream stream = new ByteArrayInputStream("abcdef\0abc".getBytes())) {
-            var val = Io.ReadBytesUntil(stream, (byte) '\0');
+            byte[] val = Io.ReadBytesUntil(stream, (byte) '\0');
             assertArrayEquals(val, "abcdef".getBytes());
         }
     }

@@ -5,8 +5,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
+import java.nio.channels.WritableByteChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -55,9 +57,9 @@ public class Interface  implements AutoCloseable {
     }
 
     private void write(String format, Object value) throws IOException {
-        try (var stream  = transport.getOutputStream()) {
-            try (var channel = Channels.newChannel(stream)) {
-                var buffer = ByteBufferStruct.Pack(format, new Object[]{ value });
+        try (OutputStream stream  = transport.getOutputStream()) {
+            try (WritableByteChannel channel = Channels.newChannel(stream)) {
+                ByteBuffer buffer = ByteBufferStruct.Pack(format, new Object[]{ value });
 
                 try {
                     channel.write(buffer);
@@ -113,7 +115,7 @@ public class Interface  implements AutoCloseable {
         AssertProtocol(new String(readByteString(), StandardCharsets.UTF_8));
         device.protocol = PROTOCOL;
 
-        var version = new int[]{
+        int[] version = new int[]{
             ((Integer)read("B")).intValue(),
             ((Integer)read("B")).intValue(),
             ((Integer)read("B")).intValue()
@@ -122,18 +124,18 @@ public class Interface  implements AutoCloseable {
 
         device.version = VERSION;
 
-        var endianness_size = readByteString();
+        byte[] endianness_size = readByteString();
         device.endianness = (char) endianness_size[0];
         device.size_t = (char) endianness_size[1];
 
         for (int i = 0;; i++) {
-            var line = readByteString();
+            byte[] line = readByteString();
             if (line.length == 0)
                 break;
 
-            var buffer = ByteBuffer.wrap(line);
+            ByteBuffer buffer = ByteBuffer.wrap(line);
             
-            var method = Protocol.ParseLine(i, buffer);
+            Method method = Protocol.ParseLine(i, buffer);
             device.methods.put(method.name, method);
         }
     }
@@ -186,13 +188,13 @@ public class Interface  implements AutoCloseable {
      */
     public Object call_method(String methodName, Object... arguments) throws IOException {
         if (!device.methods.containsKey(methodName))
-            throw new RuntimeException("Invalid method name: %s.".formatted(methodName));
+            throw new RuntimeException(String.format("Invalid method name: %s.", methodName));
         
-        var method = device.methods.get(methodName);
-        var args = Arrays.asList(arguments);
+        Method method = device.methods.get(methodName);
+        List<Object> args = Arrays.asList(arguments);
 
         if (method.parameters.size() != args.size())
-            throw new RuntimeException("%s expected %d arguments, got %d.".formatted(methodName, method.parameters.size(), args.size()));
+            throw new RuntimeException(String.format("%s expected %d arguments, got %d.", methodName, method.parameters.size(), args.size()));
         
         // Call the method.
         this.select(method.index);
