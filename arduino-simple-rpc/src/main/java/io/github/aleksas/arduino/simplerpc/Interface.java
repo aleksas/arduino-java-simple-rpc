@@ -188,13 +188,13 @@ public class Interface  implements AutoCloseable {
      */
     public Object call_method(String methodName, Object... arguments) throws IOException {
         if (!device.methods.containsKey(methodName))
-            throw new RuntimeException("Invalid method name: %s.".formatted(methodName));
+            throw new RuntimeException(String.format("Invalid method name: %s.", methodName));
         
         Method method = device.methods.get(methodName);
         List<Object> args = Arrays.asList(arguments);
 
         if (method.parameters.size() != args.size())
-            throw new RuntimeException("%s expected %d arguments, got %d.".formatted(methodName, method.parameters.size(), args.size()));
+            throw new RuntimeException(String.format("%s expected %d arguments, got %d.", methodName, method.parameters.size(), args.size()));
         
         // Call the method.
         this.select(method.index);
