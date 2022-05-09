@@ -131,7 +131,7 @@ public class Io {
             } else 
                 throw new RuntimeException("Not implemented");
             
-            var tmp = new ArrayList<Object>();
+                List<Object> tmp = new ArrayList<Object>();
             for (Object object: (List) obj_type)
                 for (int i = 0; i < length; i++)
                     tmp.add(Read(stream, endianness, size_t, object));
@@ -140,7 +140,7 @@ public class Io {
             return Read(stream, endianness, size_t, Arrays.asList(obj_type));    
         }
 
-        var out = ReadBasic(stream, endianness, ((String) obj_type).charAt(0));
+        Object out = ReadBasic(stream, endianness, ((String) obj_type).charAt(0));
         return out;
     }
 
@@ -157,18 +157,18 @@ public class Io {
             WriteBasic(stream, endianness, size_t, Short.valueOf((short) Math.floorDiv(((List)object).size(), ((List)obj_type).size())));
         }
         if (obj_type instanceof Iterable) {
-            var obj_list = new ArrayList<Object>();
+            List<Object> obj_list = new ArrayList<Object>();
             ((Iterable) object).forEach(obj_list::add);
 
-            var obj_type_list = new ArrayList<Object>();
+            List<Object> obj_type_list = new ArrayList<Object>();
 
             for (int i = 0; i < obj_list.size(); i++) {
                 ((Iterable) obj_type).forEach(obj_type_list::add);
             }
             
             for (int i = 0; i < obj_list.size(); i++) {
-                var item = obj_list.get(i);
-                var item_type = obj_type_list.get(i);
+                Object item = obj_list.get(i);
+                Object item_type = obj_type_list.get(i);
                 Object items = null;
                 if (item_type instanceof Iterable) {
                     items = item;

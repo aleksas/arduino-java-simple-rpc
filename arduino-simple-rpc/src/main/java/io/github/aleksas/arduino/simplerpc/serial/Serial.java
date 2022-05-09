@@ -11,8 +11,8 @@ public class Serial implements Transport, AutoCloseable {
     public SerialPort serial = null;
 
     public Serial(String device, boolean do_not_open, int baudrate) {
-        var ports = SerialPort.getCommPorts();
-        for(var port: ports) {
+        SerialPort[] ports = SerialPort.getCommPorts();
+        for(SerialPort port: ports) {
             if (port.getSystemPortPath().equals(device)) {
                 serial = port;
                 break;

@@ -23,7 +23,7 @@ public class Utils {
                 return new Iterator<ByteBuffer>() {    
                     @Override
                     public boolean hasNext() {
-                        var tmp = slice.slice();
+                        ByteBuffer tmp = slice.slice();
                         while(tmp.hasRemaining()) {
                             if (tmp.get() != separator) {
                                 return true;
@@ -36,11 +36,11 @@ public class Utils {
                     public ByteBuffer next() {
                         boolean collecting = false;
                         while(slice.hasRemaining()) {
-                            var value = slice.get();
+                            byte value = slice.get();
                 
                             if (collecting) {
                                 if (value == separator) {
-                                    var ret = slice.slice(start_index, slice.position() - start_index - 1);
+                                    ByteBuffer ret = slice.slice(start_index, slice.position() - start_index - 1);
                                     return ret;
                                 }
                             } else {

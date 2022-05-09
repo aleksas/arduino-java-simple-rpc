@@ -29,7 +29,7 @@ public class Parameter {
         if (obj == this)  
             return true;  
         if (obj instanceof Parameter) {
-            var param = (Parameter) obj;
+            Parameter param = (Parameter) obj;
             return (doc == param.doc || doc.equals(param.doc)) && 
                 (name == param.name || name.equals(param.name)) && 
                 (fmt == param.fmt || fmt.equals(param.fmt)) && 

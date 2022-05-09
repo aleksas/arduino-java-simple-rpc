@@ -48,17 +48,17 @@ public class ProtocolTest {
 
     @Test public void testParseTypeListObject() {
         Tuple tuple = new Tuple("i", "c");
-        var list = Arrays.asList(tuple);
+        List<Tuple> list = Arrays.asList(tuple);
         assertEquals(list, Protocol.ParseType(ByteBuffer.wrap("[(ic)]".getBytes())));
     }
 
     @Test public void testParseTypeListList() {
-        var list = Arrays.asList(Arrays.asList("i"));
+        List<List<String>> list = Arrays.asList(Arrays.asList("i"));
         assertEquals(list, Protocol.ParseType(ByteBuffer.wrap("[[i])]".getBytes())));
     }
 
     @Test public void testParseTypeObjectTuple() {
-        var pair = new Tuple("i", "c");
+        Tuple pair = new Tuple("i", "c");
         assertEquals(pair, Protocol.ParseType(ByteBuffer.wrap("(ic)".getBytes())));
     }
 
