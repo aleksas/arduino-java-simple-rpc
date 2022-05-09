@@ -130,7 +130,9 @@ class Protocol {
         ByteBuffer parameters = signature.slice();
         while(parameters.get() != (byte) ':') {}
 
-        ByteBuffer fmt = signature.slice(0, parameters.position() - 1);
+        ByteBuffer fmt = signature.slice();
+        fmt = fmt.limit(parameters.position() - 1);
+
         Object parsed_type = ParseType(fmt);
 
         method.ret.fmt = parsed_type;
