@@ -135,7 +135,7 @@ public class ProtocolTest {
         method.parameters.add(new Parameter("arg0", Arrays.asList("c"), "[Byte[]]"));
         method.parameters.add(new Parameter("arg1", new Tuple("c", "f"), "(Byte[], Float)"));
         method.ret.fmt = new Tuple("f", "f");
-        method.ret.tyme_name = "(Float, Float)";
+        method.ret.typename = "(Float, Float)";
         
         assertEquals(method, Protocol.ParseSignature(2, "(ff): [c] (cf)"));
     }

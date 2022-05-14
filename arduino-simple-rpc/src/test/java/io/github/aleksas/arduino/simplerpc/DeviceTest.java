@@ -4,7 +4,15 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -56,7 +64,7 @@ public abstract class DeviceTest<T extends Interface> {
 
     @Test
     public void test04Type1() {
-        assertEquals(iface.device.methods.get("ping").ret.tyme_name, "Integer");
+        assertEquals(iface.device.methods.get("ping").ret.typename, "Integer");
     }
 
     @Test
@@ -66,7 +74,7 @@ public abstract class DeviceTest<T extends Interface> {
 
     @Test
     public void test06Param() {
-        assertEquals(iface.device.methods.get("ping").parameters.get(0).tyme_name, "Integer");
+        assertEquals(iface.device.methods.get("ping").parameters.get(0).typename, "Integer");
     }
 
     @Test
@@ -90,13 +98,22 @@ public abstract class DeviceTest<T extends Interface> {
     }
 
     @Test
-    public void test11Save() {
-        // iface_handle = StringIO()
+    public void test11Save() throws Exception {
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            iface.save(outputStream);
 
-        // self._interface.save(iface_handle)
-        // iface_handle.seek(0)
-        // device = load(iface_handle, Loader=FullLoader)
-        // assert device['methods']['ping']['doc'] == 'Echo a value.'
+            try (InputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray())) {
+                inputStream.reset();
+                ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+                mapper.setVisibility(PropertyAccessor.FIELD, Visibility.PUBLIC_ONLY);
+                try {
+                    Device device = mapper.readValue(inputStream, Device.class);
+                    assertEquals(device.methods.get("ping").doc, "Echo a value.");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     @Test
@@ -123,19 +140,17 @@ public abstract class DeviceTest<T extends Interface> {
                 assertTrue(interf.isOpen());
                 assertEquals(interf.device.version, Interface.VERSION);
                 assertEquals(interf.call_method("ping", 3), 3);
-                assertEquals(interf.device.methods.get("ping").ret.tyme_name, "Integer");
+                assertEquals(interf.device.methods.get("ping").ret.typename, "Integer");
             }
         }
     }
 
     @Test
-    public void test14OpenLoad() {
-        // iface_handle = StringIO(_interface)
-
-        // self._interface.open(iface_handle)
-        // assert (
-        //     self._interface.device['methods']['ping']['doc'] ==
-        //     'Echo a value.')
-        // assert not self._interface.device['methods'].get('inc', None)
+    public void test14OpenLoad() throws Exception {
+        try (InputStream targetStream = new ByteArrayInputStream(Config.INTERFACE)) {
+            iface.open(targetStream);
+        }
+        assertEquals(iface.device.methods.get("ping").doc, "Echo a value.");
+        assertEquals(iface.device.methods.get("inc"), null);
     }
 }

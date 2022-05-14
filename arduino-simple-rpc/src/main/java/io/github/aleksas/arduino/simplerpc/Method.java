@@ -3,6 +3,8 @@ package io.github.aleksas.arduino.simplerpc;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Method class.
  */
@@ -11,7 +13,14 @@ public class Method {
     public int index;
     public String name;
     public List<Parameter> parameters;
+    @JsonProperty("return") 
     public Return ret;
+
+    /**
+     * Method constructor. Do not use. Only for deserialization.
+     */
+    public Method() {
+    }
 
     /**
      * Method constructor.

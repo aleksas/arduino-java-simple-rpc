@@ -6,7 +6,7 @@ package io.github.aleksas.arduino.simplerpc;
 public class Return {
     public String doc;
     public Object fmt;
-    public String tyme_name = "";
+    public String typename = "";
 
     @Override  
     public boolean equals(Object obj)   
@@ -19,7 +19,7 @@ public class Return {
             Return ret = (Return) obj;
             return (doc == ret.doc || doc.equals(ret.doc)) &&
                 (fmt == ret.fmt || fmt.equals(ret.fmt)) &&
-                (tyme_name == ret.tyme_name || tyme_name.equals(ret.tyme_name));
+                (typename == ret.typename || typename.equals(ret.typename));
         }
 
         return false;
@@ -29,7 +29,7 @@ public class Return {
     public int hashCode() {
         int hash = (this.doc != null ? this.doc.hashCode() : 0);
         hash = 100 * hash + (this.fmt != null ? this.fmt.hashCode() : 0);
-        hash = 100 * hash + (this.tyme_name != null ? this.tyme_name.hashCode() : 0);
+        hash = 100 * hash + (this.typename != null ? this.typename.hashCode() : 0);
         return hash;
     }
 }

@@ -7,18 +7,25 @@ public class Parameter {
     public String doc;
     public String name;
     public Object fmt;
-    public String tyme_name;
+    public String typename;
+
+
+    /**
+     * Parameter constructor. Do not use. Only for deserialization.
+     */
+    public Parameter() {
+    }
 
     /**
      * Method parameter constructor.
      * @param name Parameter name.
      * @param fmt Parameter format.
-     * @param type_name Parameter type name.
+     * @param typename Parameter type name.
      */
-    public Parameter(String name, Object fmt, String type_name) {
+    public Parameter(String name, Object fmt, String typename) {
         this.name = name;
         this.fmt = fmt;
-        this.tyme_name = type_name;
+        this.typename = typename;
     }
 
     @Override  
@@ -33,7 +40,7 @@ public class Parameter {
             return (doc == param.doc || doc.equals(param.doc)) && 
                 (name == param.name || name.equals(param.name)) && 
                 (fmt == param.fmt || fmt.equals(param.fmt)) && 
-                (tyme_name == param.tyme_name || tyme_name.equals(param.tyme_name));
+                (typename == param.typename || typename.equals(param.typename));
         }
 
         return false;
@@ -44,7 +51,7 @@ public class Parameter {
         int hash = (this.doc != null ? this.doc.hashCode() : 0);
         hash = 100 * hash + (this.name != null ? this.name.hashCode() : 0);
         hash = 100 * hash + (this.fmt != null ? this.fmt.hashCode() : 0);
-        hash = 100 * hash + (this.tyme_name != null ? this.tyme_name.hashCode() : 0);
+        hash = 100 * hash + (this.typename != null ? this.typename.hashCode() : 0);
         return hash;
     }    
 }

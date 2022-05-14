@@ -136,7 +136,7 @@ class Protocol {
         Object parsed_type = ParseType(fmt);
 
         method.ret.fmt = parsed_type;
-        method.ret.tyme_name = TypeName(parsed_type);
+        method.ret.typename = TypeName(parsed_type);
         
         int param_index = 0;
         for (ByteBuffer parameter_fmt : Utils.Split(parameters, (byte) ' ')) {

@@ -12,8 +12,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-//import com.fasterxml.jackson.databind.ObjectMapper;
-// import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import io.github.aleksas.pystruct.ByteBufferStruct;
 
@@ -96,11 +98,14 @@ public class Interface  implements AutoCloseable {
     } 
 
     private void load(InputStream handle) {
-        // var mapper = new ObjectMapper(new YAMLFactory());
-        // mapper.findAndRegisterModules();
-        // Interface iterface = mapper.readValue(handle, Interface.class);
-        // TODO: implement yaml loader
-        throw new RuntimeException("Not implementd");
+        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+        mapper.setVisibility(PropertyAccessor.FIELD, Visibility.PUBLIC_ONLY);
+        try {
+            device = mapper.readValue(handle, Device.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -219,6 +224,13 @@ public class Interface  implements AutoCloseable {
      * @param stream Output file stream.
      */
     public void save(OutputStream stream) {
-        throw new RuntimeException("Not implemented.");
+        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+        mapper.setVisibility(PropertyAccessor.FIELD, Visibility.PUBLIC_ONLY);
+        try {
+            mapper.writeValue(stream, device);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 }
