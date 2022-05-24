@@ -8,8 +8,8 @@ Arduino simpleRPC API JAVA client library
 
 ----
 
-This library provides a simple way to interface to Arduino_ functions exported
-with the simpleRPC_ protocol. The exported method definitions are communicated
+This library provides a simple way to interface to [Arduino](https://www.arduino.cc/) functions exported
+with the [simpleRPC protocol](https://www.arduino.cc/reference/en/libraries/simplerpc/). The exported method definitions are communicated
 to the host, which is then able to generate an API interface using this
 library.
 
