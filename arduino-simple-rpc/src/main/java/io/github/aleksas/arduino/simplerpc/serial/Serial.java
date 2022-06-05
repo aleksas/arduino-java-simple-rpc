@@ -1,5 +1,6 @@
 package io.github.aleksas.arduino.simplerpc.serial;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -38,11 +39,11 @@ public class Serial implements Transport, AutoCloseable {
         return serial.isOpen();
     }
 
-    public InputStream getInputStream() {
+    public InputStream getInputStream() throws IOException {
         return serial.getInputStream();
     }
 
-    public OutputStream getOutputStream() {
+    public OutputStream getOutputStream() throws IOException {
         return serial.getOutputStream();
     }
 
