@@ -19,7 +19,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import io.github.aleksas.pystruct.ByteBufferStruct;
 
-public class Interface  implements AutoCloseable {
+public class Interface implements AutoCloseable {
     private static String PROTOCOL = "simpleRPC";
     private static int LIST_REQUEST = 0xff;
     
@@ -31,6 +31,7 @@ public class Interface  implements AutoCloseable {
     public Transport transport = null; 
     //public int baudrate = 9600;
     public Device device = null; 
+    public boolean writeChannel = true;
 
     public Interface(Transport transport, int wait, boolean autoconnect, InputStream load) throws Exception {
         this.wait = wait;
@@ -59,15 +60,15 @@ public class Interface  implements AutoCloseable {
     }
 
     private void write(String format, Object value) throws IOException {
-        try (OutputStream stream  = transport.getOutputStream()) {
-            try (WritableByteChannel channel = Channels.newChannel(stream)) {
-                ByteBuffer buffer = ByteBufferStruct.Pack(format, new Object[]{ value });
+        try (OutputStream stream  = transport.getOutputStream()) {            
+            ByteBuffer buffer = ByteBufferStruct.Pack(format, new Object[]{ value });
 
-                try {
+            if (writeChannel) {
+                try (WritableByteChannel channel = Channels.newChannel(stream)) {
                     channel.write(buffer);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
                 }
+            } else {
+                stream.write(buffer.array(), buffer.arrayOffset(), buffer.limit());
             }
         }
     }
