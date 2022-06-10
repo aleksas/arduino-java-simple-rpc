@@ -28,6 +28,10 @@ public class Serial implements Transport, AutoCloseable {
         if (!do_not_open)
             serial.openPort();
     }
+
+    public boolean useWritableByteChannel() {
+        return true;
+    }
     
     public void open() {
         if (!serial.openPort())
