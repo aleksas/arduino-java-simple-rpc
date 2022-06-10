@@ -10,4 +10,5 @@ public interface Transport {
     public boolean isOpen();
     public InputStream getInputStream() throws IOException;
     public OutputStream getOutputStream() throws IOException;
+    public boolean useWritableByteChannel();
 }

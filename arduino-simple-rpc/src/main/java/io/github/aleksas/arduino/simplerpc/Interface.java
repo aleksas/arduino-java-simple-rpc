@@ -19,6 +19,9 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import io.github.aleksas.pystruct.ByteBufferStruct;
 
+/**
+ * Generic simpleRPC interface.
+ */
 public class Interface implements AutoCloseable {
     private static String PROTOCOL = "simpleRPC";
     private static int LIST_REQUEST = 0xff;
@@ -26,16 +29,21 @@ public class Interface implements AutoCloseable {
     public static int[] VERSION = {3, 0, 0};
 
     public int wait = 2;
-    public boolean autoconnect = true;
     public InputStream load = null; 
     public Transport transport = null; 
-    //public int baudrate = 9600;
     public Device device = null; 
-    public boolean writeChannel = true;
 
+    /**
+     * Generic simpleRPC interface constructor.
+     * @param transport Transport providing device input and out streams.
+     * @param wait Time in seconds before communication starts.
+     * @param autoconnect Automatically connect.
+     * @param load Load interface definition from file.
+     * @throws Exception
+     */
     public Interface(Transport transport, int wait, boolean autoconnect, InputStream load) throws Exception {
         this.wait = wait;
-        this.transport = transport;//new Serial(device, true, baudrate); //serial_for_url(device, true, baudrate);
+        this.transport = transport;
         this.device = new Device();
 
         if (autoconnect)
@@ -63,7 +71,7 @@ public class Interface implements AutoCloseable {
         try (OutputStream stream  = transport.getOutputStream()) {            
             ByteBuffer buffer = ByteBufferStruct.Pack(format, new Object[]{ value });
 
-            if (writeChannel) {
+            if (transport.useWritableByteChannel()) {
                 try (WritableByteChannel channel = Channels.newChannel(stream)) {
                     channel.write(buffer);
                 }
@@ -96,8 +104,12 @@ public class Interface implements AutoCloseable {
      */
     private void select(int index) throws IOException {
         this.write("B", index);
-    } 
+    }
 
+    /**
+     * Load the interface definition from a file.
+     * @param handle Open file handle.
+     */
     private void load(InputStream handle) {
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         mapper.setVisibility(PropertyAccessor.FIELD, Visibility.PUBLIC_ONLY);

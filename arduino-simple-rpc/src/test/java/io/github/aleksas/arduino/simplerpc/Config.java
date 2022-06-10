@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class Config {
     public static final Map<String,String> DEVICES = Map.ofEntries(
-        entry("serial", "/dev/ttyACM0"),
+        entry("serial", "/dev/ttyUSB0"),
         entry("wifi", "socket://192.168.21.53:1025"),
         entry("bt", "/dev/rfcomm0")
     );   
