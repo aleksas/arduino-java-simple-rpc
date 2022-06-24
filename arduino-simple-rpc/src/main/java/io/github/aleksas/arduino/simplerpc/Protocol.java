@@ -10,6 +10,7 @@ import java.util.List;
 /**
  * Simple RPC protocol class.
  */
+@SuppressWarnings({"rawtypes", "unchecked"})
 class Protocol {
     /**
      * Java type name of a C object type.

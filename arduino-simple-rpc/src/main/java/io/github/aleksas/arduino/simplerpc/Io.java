@@ -12,9 +12,11 @@ import java.util.List;
 
 import io.github.aleksas.pystruct.ByteBufferStruct;
 
+
 /**
  * Io class.
  */
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class Io {
     /**
      * Select the appropriate casting function given a C type.
@@ -152,6 +154,7 @@ public class Io {
      * @param obj_type Type object.
      * @throws Exception
      */
+    
     public static void Write(OutputStream stream, char endianness, char size_t, Object obj_type, Object object) throws Exception {
         if (obj_type instanceof List) {
             WriteBasic(stream, endianness, size_t, Short.valueOf((short) Math.floorDiv(((List)object).size(), ((List)obj_type).size())));
