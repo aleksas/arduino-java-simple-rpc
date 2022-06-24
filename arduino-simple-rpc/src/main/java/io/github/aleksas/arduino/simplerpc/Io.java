@@ -6,9 +6,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
 import io.github.aleksas.pystruct.ByteBufferStruct;
 
@@ -59,6 +61,92 @@ public class Io {
         Channels.newChannel(stream).write(buffer);
     }
 
+    private static ByteBuffer byteBuffer;
+
+    static {
+        byteBuffer = ByteBuffer.allocate(1024);
+    }
+
+    interface RunnableLambda {
+        default boolean run(Object ... arguments) {
+            throw new UnsupportedOperationException("not possible");
+        }
+    }
+
+    class LengthLambda implements RunnableLambda {
+        @Override
+        public
+        boolean run(Object ... arguments) {
+            assert(arguments.length == 2);
+            assert(arguments[0] instanceof ByteArrayOutputStream);
+            assert(arguments[1] instanceof Integer);
+
+            return checkSize((ByteArrayOutputStream) arguments[0], (Integer)arguments[1]);
+        };
+
+        boolean checkSize(ByteArrayOutputStream buffer, Integer length)  {return buffer.size() < length;}
+    }
+
+    class UntilLambda implements RunnableLambda {
+        @Override
+        public
+        boolean run(Object ... arguments) {
+            assert(arguments.length == 2);
+            assert(arguments[0] instanceof ByteArrayOutputStream);
+            assert(arguments[1] instanceof Integer);
+
+            return checkSize((ByteArrayOutputStream) arguments[0], (Integer)arguments[1]);
+        };
+
+        boolean checkSize(ByteArrayOutputStream buffer, Integer length)  {return buffer.size() < length;}
+    }
+
+    private byte[] ReadInternal(InputStream stream, RunnableLambda lambda, Object ... arguments) {
+    
+        try (ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
+            boolean flag = true;
+            while (flag) {
+                while(flag && byteBuffer.hasRemaining()) {
+                    byte value = (byte) byteBuffer.get();
+                    buffer.write(value);
+                    flag = lambda.run(buffer, arguments);
+                }
+
+                try (ReadableByteChannel channel = Channels.newChannel(stream)) {      
+                    if(flag && channel.read(byteBuffer) > 0){
+                        byteBuffer.flip();
+                    }
+                }
+            }
+
+            return buffer.toByteArray();
+    }
+
+    public byte[] Read(InputStream stream, int length) {
+
+        try (ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
+            LengthLambda lambda;
+
+            return ReadInternal(stream, lambda, length);
+
+            // boolean flag = true;
+            // while (flag) {
+            //     while(flag && byteBuffer.hasRemaining()) {
+            //         byte value = (byte) byteBuffer.get();
+            //         buffer.write(value);
+            //         flag = buffer.size() < length;
+            //     }
+
+            //     try (ReadableByteChannel channel = Channels.newChannel(stream)) {      
+            //         if(flag && channel.read(byteBuffer) > 0){
+            //             byteBuffer.flip();
+            //         }
+            //     }
+            // }
+
+            // return buffer.toByteArray();
+    }
+
     /**
      * Read bytes from {stream} until the first encounter of {delimiter}.
      * @param stream Stream object.
@@ -68,18 +156,40 @@ public class Io {
      */
     public static byte[] ReadBytesUntil(InputStream stream, byte stop) throws IOException {
         try (ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
-            byte value;
-            do {
-                try {
-                    value = (byte) stream.read();
-                    if (value == stop) break;
-                    buffer.write(value);
-                } catch (IOException e) {
-                    break;
+            boolean flag = true;
+            while (flag) {
+                try (ReadableByteChannel channel = Channels.newChannel(stream)) {      
+                    if(channel.read(byteBuffer) > 0){
+                        byteBuffer.flip();
+                    }
                 }
-            } while (true);
+
+                while(byteBuffer.hasRemaining()) {
+                    byte value = (byte) byteBuffer.get();
+                    if (value == stop) {
+                        flag = false;
+                        break;
+                    }
+                    buffer.write(value);
+                }
+            }
+
             return buffer.toByteArray();
         }
+
+        // try (ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
+        //     byte value;
+        //     do {
+        //         try {
+        //             value = (byte) stream.read();
+        //             if (value == stop) break;
+        //             buffer.write(value);
+        //         } catch (IOException e) {
+        //             break;
+        //         }
+        //     } while (true);
+        //     return buffer.toByteArray();
+        // }
     }
 
     public static byte[] ReadByteString(InputStream stream) throws IOException {
