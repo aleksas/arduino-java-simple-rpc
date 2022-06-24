@@ -36,7 +36,7 @@ public class Serial implements Transport, AutoCloseable {
     public void open() {
         if (!serial.openPort())
             throw new RuntimeException("Could not open port");
-        serial.setComPortTimeouts(SerialPort.TIMEOUT_WRITE_BLOCKING | SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 5000, 5000);
+        serial.setComPortTimeouts(SerialPort.TIMEOUT_WRITE_BLOCKING | SerialPort.TIMEOUT_READ_BLOCKING, 5000, 5000);
     }
 
     public boolean isOpen() {

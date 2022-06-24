@@ -146,7 +146,43 @@ public abstract class DeviceTest<T extends Interface> {
     }
 
     @Test
-    public void test14OpenLoad() throws Exception {
+    public void test15Open() throws Exception {
+        assertFalse(iface.isOpen());
+
+        try (Serial transport = new Serial(getDevice(), true, 9600)) {
+            try (Interface interf = new Interface(transport, 0, false, null)) {
+                assertFalse(interf.isOpen());
+                interf.open();
+                assertTrue(interf.isOpen());
+                assertEquals(interf.device.version, Interface.VERSION);
+                assertEquals(interf.call_method("inc", 3), 4);
+                assertEquals(interf.call_method("inc", -5), -4);
+                assertEquals(interf.call_method("inc", 99), 100);
+                assertEquals(interf.device.methods.get("inc").ret.typename, "Integer");
+            }
+        }
+    }
+
+    @Test
+    public void test16Open() throws Exception {
+        assertFalse(iface.isOpen());
+
+        try (Serial transport = new Serial(getDevice(), true, 9600)) {
+            try (Interface interf = new Interface(transport, 0, false, null)) {
+                assertFalse(interf.isOpen());
+                interf.open();
+                assertTrue(interf.isOpen());
+                assertEquals(interf.device.version, Interface.VERSION);
+                assertTrue((Long)interf.call_method("time") > 0);
+                assertTrue((Long)interf.call_method("time") > 0);
+                assertTrue((Long)interf.call_method("time") > 0);
+                assertEquals(interf.device.methods.get("inc").ret.typename, "Integer");
+            }
+        }
+    }
+
+    @Test
+    public void test17OpenLoad() throws Exception {
         try (InputStream targetStream = new ByteArrayInputStream(Config.INTERFACE)) {
             iface.open(targetStream);
         }
