@@ -9,3 +9,4 @@ lib/bin
 *.class
 gradle.properties
 local.properties
+arduino-simple-rpc/bin/test/interface.yaml
