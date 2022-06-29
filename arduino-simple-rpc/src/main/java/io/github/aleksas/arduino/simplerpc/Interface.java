@@ -7,6 +7,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -220,7 +221,16 @@ public class Interface implements AutoCloseable {
         // Provide parameters (if any).
         if (method.parameters.size() != 0) {
             for (int i = 0; i < method.parameters.size(); i++) {
-                this.write((String)method.parameters.get(i).fmt, args.get(i));
+                Object fmt = method.parameters.get(i).fmt;
+                String format = "";
+                if (fmt instanceof String)
+                    format += (String) fmt;
+                else if (fmt instanceof ArrayList) {
+                    for(Object f:(ArrayList)fmt) {
+                        format += (String) f;
+                    }
+                }
+                this.write(format, args.get(i));
             }
         }
 
