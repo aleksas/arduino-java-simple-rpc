@@ -50,6 +50,66 @@ public class ByteBufferStruct {
         }
     }
 
+    public static Object Cast(char format, Object object) {
+        switch (format) {
+            case 'c': return (Character) object;
+            case 'b': return (byte) object;
+            case 'B': return (int) object;
+            case '?': return (boolean) object;
+            case 'h': 
+                if (object instanceof Integer) {
+                    return ((Integer)object).shortValue();
+                } else if (object instanceof Long) {
+                    return ((Long)object).shortValue();
+                } else if (object instanceof BigInteger) {
+                    return ((BigInteger)object).shortValue();
+                }
+                return (Short)object;
+            case 'H': 
+                if (object instanceof Long) {
+                    return ((Long)object).intValue();
+                } else if (object instanceof BigInteger) {
+                    return ((BigInteger)object).intValue();
+                }
+                return (int) object;
+            case 'i':
+                if (object instanceof Long) {
+                    return ((Long)object).intValue();
+                } else if (object instanceof BigInteger) {
+                    return ((BigInteger)object).intValue();
+                }
+                return (int) object;
+            case 'I':
+            case 'L':
+                if (object instanceof BigInteger) {
+                    return ((BigInteger)object).longValue();
+                }
+                return (long) object;
+            case 'q': 
+            case 'Q': return (BigInteger) object;
+            case 'f': 
+                if (object instanceof Integer) {
+                    return ((Integer)object).floatValue();
+                } else if (object instanceof Long) {
+                    return ((Long)object).floatValue();
+                } else if (object instanceof BigInteger) {
+                    return ((BigInteger)object).floatValue();
+                }
+                return (float) object;
+            case 'd':
+                if (object instanceof Integer) {
+                    return ((Integer)object).doubleValue();
+                } else if (object instanceof Long) {
+                    return ((Long)object).doubleValue();
+                } else if (object instanceof BigInteger) {
+                    return ((BigInteger)object).doubleValue();
+                }
+                return (double) object;
+            default:
+                throw new RuntimeException(String.format("Not supported format: %c", format));
+        }
+    }
+
     public static ByteBuffer Pack(String format, Object[] object) {
         byte[] bytes = new byte[CalcSize(format)];
         
@@ -82,30 +142,30 @@ public class ByteBufferStruct {
                     buffer.put((byte)(((boolean) object[pos])?1:0));
                     break;
                 case 'h':
-                    buffer.putShort((Short)object[pos]);
+                    buffer.putShort((Short) Cast(c, object[pos]));
                     break;
                 case 'H':
                     buffer.putShort((short) (((int) object[pos]) & 0xffff));
                     break;
                 case 'i':
                 case 'l':
-                    buffer.putInt((int) object[pos]);
+                    buffer.putInt((int) Cast(c, object[pos]));
                     break;
                 case 'I':
                 case 'L':
                     buffer.putInt((int) (((long) object[pos]) & 0xffffffffL));
                     break;
                 case 'q':
-                    buffer.putLong((long) object[pos]);
+                    buffer.putLong((long) Cast(c, object[pos]));
                     break;
                 case 'Q':
                     buffer.putLong(((BigInteger) object[pos]).longValue() & 0xffffffffffffffffL);
                     break;
                 case 'f':
-                    buffer.putFloat((float) object[pos]);
+                    buffer.putFloat((float) Cast(c, object[pos]));
                     break;
                 case 'd':
-                    buffer.putDouble((float) object[pos]);
+                    buffer.putDouble((float) Cast(c, object[pos]));
                     break;
                 default:
                     throw new RuntimeException(String.format("Not supported format: %c", c));

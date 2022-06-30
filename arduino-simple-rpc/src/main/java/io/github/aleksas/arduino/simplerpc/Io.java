@@ -33,8 +33,14 @@ public class Io {
                 return Float.class;
             if (c_type == 'd')
                 return Double.class;
-            if (c_type == 'h')
+            if (c_type == 'H' || c_type == 'h')
                 return Short.class;
+            if (c_type == 'i' || c_type == 'I')
+                return Integer.class;
+            if (c_type == 'L')
+                return Long.class;
+            if (c_type == '?')
+                return Boolean.class;
             return Integer.class;
         }
     } 
@@ -54,7 +60,8 @@ public class Io {
         if (value.getClass().isArray())
             arr = (Object[]) value;
         else
-            arr = Arrays.asList(TypeClass(basic_type).cast(value)).toArray();
+            //arr = Arrays.asList(TypeClass(basic_type).cast(value)).toArray();
+            arr = Arrays.asList(ByteBufferStruct.Cast(basic_type, value)).toArray();
 
         ByteBuffer buffer = ByteBufferStruct.Pack(full_type, arr);
         
@@ -152,7 +159,7 @@ public class Io {
      * @param endianness Endianness.
      * @param size_t Type of size_t.
      * @param obj_type Type object.
-     * @throws IOException
+     * @throws Exception
      */
     
     public static void Write(OutputStream stream, char endianness, char size_t, Object obj_type, Object object) throws IOException {
