@@ -68,17 +68,9 @@ public class Interface implements AutoCloseable {
         return this.transport.isOpen();
     }
 
-    private void write(String format, Object value) throws IOException {
-        try (OutputStream stream  = transport.getOutputStream()) {            
-            ByteBuffer buffer = ByteBufferStruct.Pack(format, new Object[]{ value });
-
-            if (transport.useWritableByteChannel()) {
-                try (WritableByteChannel channel = Channels.newChannel(stream)) {
-                    channel.write(buffer);
-                }
-            } else {
-                stream.write(buffer.array(), buffer.arrayOffset(), buffer.limit());
-            }
+    private void write(Object format, Object value) throws IOException {
+        try (OutputStream stream  = transport.getOutputStream()) {     
+            Io.Write(stream, device.endianness, device.size_t, format, value);
         }
     }
 
@@ -221,16 +213,7 @@ public class Interface implements AutoCloseable {
         // Provide parameters (if any).
         if (method.parameters.size() != 0) {
             for (int i = 0; i < method.parameters.size(); i++) {
-                Object fmt = method.parameters.get(i).fmt;
-                String format = "";
-                if (fmt instanceof String)
-                    format += (String) fmt;
-                else if (fmt instanceof ArrayList) {
-                    for(Object f:(ArrayList)fmt) {
-                        format += (String) f;
-                    }
-                }
-                this.write(format, args.get(i));
+                this.write(method.parameters.get(i).fmt, args.get(i));
             }
         }
 

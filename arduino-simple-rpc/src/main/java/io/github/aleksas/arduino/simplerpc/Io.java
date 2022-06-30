@@ -39,7 +39,7 @@ public class Io {
         }
     } 
 
-    public static void WriteBasic(OutputStream stream, char endianness, char basic_type, Object value) throws Exception {
+    public static void WriteBasic(OutputStream stream, char endianness, char basic_type, Object value) throws IOException {
         if (basic_type == 's') {
             assert (value instanceof byte[]);
             stream.write((byte[])value);
@@ -155,9 +155,9 @@ public class Io {
      * @throws Exception
      */
     
-    public static void Write(OutputStream stream, char endianness, char size_t, Object obj_type, Object object) throws Exception {
+    public static void Write(OutputStream stream, char endianness, char size_t, Object obj_type, Object object) throws IOException {
         if (obj_type instanceof List) {
-            WriteBasic(stream, endianness, size_t, Short.valueOf((short) Math.floorDiv(((List)object).size(), ((List)obj_type).size())));
+            WriteBasic(stream, endianness, size_t, Integer.valueOf((int) Math.floorDiv(((List)object).size(), ((List)obj_type).size())));
         }
         if (obj_type instanceof Iterable) {
             List<Object> obj_list = new ArrayList<Object>();
