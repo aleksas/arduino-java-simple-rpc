@@ -152,7 +152,7 @@ public class Io {
      * @param endianness Endianness.
      * @param size_t Type of size_t.
      * @param obj_type Type object.
-     * @throws Exception
+     * @throws IOException
      */
     
     public static void Write(OutputStream stream, char endianness, char size_t, Object obj_type, Object object) throws IOException {
