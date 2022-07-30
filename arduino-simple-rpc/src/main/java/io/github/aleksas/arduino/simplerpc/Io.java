@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -45,6 +44,13 @@ public class Io {
         }
     } 
 
+    /**
+     * @param stream OutputStream
+     * @param endianness Endianness
+     * @param basic_type Basic type
+     * @param value Value
+     * @throws IOException
+     */
     public static void WriteBasic(OutputStream stream, char endianness, char basic_type, Object value) throws IOException {
         if (basic_type == 's') {
             assert (value instanceof byte[]);
@@ -65,7 +71,7 @@ public class Io {
 
         ByteBuffer buffer = ByteBufferStruct.Pack(full_type, arr);
         
-        Channels.newChannel(stream).write(buffer);
+        stream.write(buffer.array());
     }
 
     /**

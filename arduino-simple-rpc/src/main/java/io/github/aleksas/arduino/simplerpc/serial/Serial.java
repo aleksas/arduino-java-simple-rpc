@@ -11,6 +11,11 @@ import io.github.aleksas.arduino.simplerpc.Transport;
 public class Serial implements Transport, AutoCloseable {
     public SerialPort serial = null;
 
+    /**
+     * @param device Serial device path.
+     * @param do_not_open Open later explicitly using open() function
+     * @param baudrate Serial device baud rate.
+     */
     public Serial(String device, boolean do_not_open, int baudrate) {
         SerialPort[] ports = SerialPort.getCommPorts();
         for(SerialPort port: ports) {
@@ -27,10 +32,6 @@ public class Serial implements Transport, AutoCloseable {
 
         if (!do_not_open)
             serial.openPort();
-    }
-
-    public boolean useWritableByteChannel() {
-        return true;
     }
     
     public void open() {
