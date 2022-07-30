@@ -67,9 +67,7 @@ public class Interface implements AutoCloseable {
     }
 
     private void write(Object format, Object value) throws IOException {
-        try (OutputStream stream  = transport.getOutputStream()) {     
-            Io.Write(stream, device.endianness, device.size_t, format, value);
-        }
+        Io.Write(transport.getOutputStream(), device.endianness, device.size_t, format, value);
     }
 
     private byte[] readByteString() throws IOException {
