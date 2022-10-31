@@ -16,8 +16,6 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
-import io.github.aleksas.pystruct.ByteBufferStruct;
-
 /**
  * Generic simpleRPC interface.
  */
@@ -215,7 +213,14 @@ public class Interface implements AutoCloseable {
 
         // Read return value (if any).
         if (method.ret.fmt != null) {
-            return this.read((String) method.ret.fmt);
+            Object param = null;
+            if (ArrayList.class.isInstance(method.ret.fmt)) {
+                assert(((ArrayList)method.ret.fmt).size() == 1);
+                param = ((ArrayList)method.ret.fmt).get(0);
+            } else {
+                param = method.ret.fmt;
+            }
+            return this.read((String) param);
         }
 
         return null;
