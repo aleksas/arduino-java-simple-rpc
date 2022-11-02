@@ -36,8 +36,11 @@ jobs:
           base64 -d ${RUNNER_TEMP}/secring.gpg.b64 > ${RUNNER_TEMP}/secring.kbx
       #Publish project
       - name: Publish
-        if: ${{ github.ref == 'refs/heads/master' }}
-        run: ./gradlew publish -Psigning.keyId=${{secrets.SIGNING_KEY_ID}} -Psigning.password="${{secrets.SIGNING_PASSWORD}}" -Psigning.secretKeyRingFile="${RUNNER_TEMP}/secring.kbx"
+        run: |
+            if ${{ github.ref == 'refs/heads/master' }}; then
+              ./gradlew publish -Psigning.keyId=${{secrets.SIGNING_KEY_ID}} -Psigning.password="${{secrets.SIGNING_PASSWORD}}" -Psigning.secretKeyRingFile="${RUNNER_TEMP}/secring.kbx"
+            fi
+        shell: bash
         env:
           MAVEN_USERNAME: ${{secrets.OSSRH_USERNAME}}
           MAVEN_PASSWORD: ${{secrets.OSSRH_TOKEN}}
